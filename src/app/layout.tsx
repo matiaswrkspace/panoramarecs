@@ -11,12 +11,12 @@ const logo = Yellowtail({ variable: "--font-logo", weight: "400", subsets: ["lat
 
 export const metadata: Metadata = {
   title: brand.name,
-  description: brand.tagline,
+  description: "Electronic music",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="it" className={`${sans.variable} ${script.variable} ${logo.variable}`}>
+    <html lang="en" className={`${sans.variable} ${script.variable} ${logo.variable}`}>
       <body>{children}</body>
     </html>
   );

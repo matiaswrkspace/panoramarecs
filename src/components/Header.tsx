@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { brand, menu, nav } from "@/content";
+import { brand, menuHrefs, navHrefs } from "@/content";
+import { setLang, useLang } from "@/i18n";
 import Logo from "./Logo";
 
 export default function Header() {
+  const { lang, t } = useLang();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -26,8 +28,8 @@ export default function Header() {
           <Logo />
         </a>
         <nav className="header__nav">
-          {nav.map((l) => (
-            <a key={l.label} href={l.href}>{l.label}</a>
+          {navHrefs.map((href, i) => (
+            <a key={i} href={href}>{t.nav[i]}</a>
           ))}
         </nav>
         <button className={`burger ${open ? "burger--open" : ""}`} aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -37,11 +39,23 @@ export default function Header() {
 
       <div className={`menu ${open ? "menu--open" : ""}`} onClick={() => setOpen(false)}>
         <ul>
-          {menu.map((l, i) => (
-            <li key={l.label} style={{ transitionDelay: open ? `${80 + i * 50}ms` : "0ms" }}>
-              <a href={l.href}>{l.label}</a>
+          {menuHrefs.map((href, i) => (
+            <li key={i} style={{ transitionDelay: open ? `${80 + i * 50}ms` : "0ms" }}>
+              <a href={href}>{t.menu[i]}</a>
             </li>
           ))}
+          {/* Mostra la lingua in cui passare: "IT" sul sito inglese, "ENG" su quello italiano.
+              Il clic non chiude il menu, così il cambio si vede subito. */}
+          <li className="menu__lang" style={{ transitionDelay: open ? `${80 + menuHrefs.length * 50}ms` : "0ms" }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setLang(lang === "en" ? "it" : "en");
+              }}
+            >
+              {t.langSwitch}
+            </button>
+          </li>
         </ul>
       </div>
     </>

@@ -4,35 +4,15 @@
 
 export type Placeholder = { image?: string; tint: [string, string] };
 
-export const brand = {
-  name: "Panorama",
-  // Il logo è la scritta "Panorama" in corsivo neon (vedi components/Logo.tsx).
-  tagline: "Electronic music",
-};
+export const brand = { name: "Panorama", email: "info@example.com" };
 
-export const nav = [
-  { label: "Buy tickets", href: "#events" },
-  { label: "Book VIP zone", href: "#experiences" },
-  { label: "Restaurant", href: "#experiences" },
-  { label: "Collection", href: "#familia" },
-];
-
-export const menu = [
-  { label: "Events", href: "#events" },
-  { label: "VIP", href: "#experiences" },
-  { label: "Restaurant", href: "#experiences" },
-  { label: "Stay & Play", href: "#stay" },
-  { label: "La Familia", href: "#familia" },
-  { label: "Contact", href: "#footer" },
-];
-
-export const promo = {
-  title: "Save up to 70% on drinks & water",
-  note: "*Available only online",
-};
+// Collegamenti di barra e menu; le etichette sono in `text` qui sotto.
+export const navHrefs = ["#events", "#experiences", "#experiences", "#familia"];
+export const menuHrefs = ["#events", "#experiences", "#experiences", "#stay", "#familia", "#footer"];
 
 export type Event = Placeholder & {
-  date: string;
+  day: string; // AAAA-MM-GG, il giorno della settimana si calcola da solo
+  hours: string;
   title: string;
   lineup: string;
   ticketsFrom: number;
@@ -40,19 +20,20 @@ export type Event = Placeholder & {
 };
 
 export const events: Event[] = [
-  { date: "Wed, 30 Sept 2026 | 23:00 - 06:00", title: "Opening Night", lineup: "Artista A, Artista B, Artista C", ticketsFrom: 30, vipFrom: 175, tint: ["#d9f5e6", "#6fae8c"] },
-  { date: "Thu, 01 Oct 2026 | 23:00 - 06:00", title: "Disco Fever | Closing Party", lineup: "Artista D, Artista E, Artista F, Artista G", ticketsFrom: 30, vipFrom: 150, tint: ["#16c47a", "#04301c"] },
-  { date: "Fri, 02 Oct 2026 | 23:00 - 06:00", title: "Deep Sessions", lineup: "Artista H, Artista I, Artista L", ticketsFrom: 85, vipFrom: 450, tint: ["#1e5a50", "#03110e"] },
-  { date: "Sat, 03 Oct 2026 | 23:00 - 06:00", title: "Season Closing Party", lineup: "Artista M, Artista N, Artista O", ticketsFrom: 30, vipFrom: 220, tint: ["#8ee04a", "#1a3a06"] },
-  { date: "Sun, 04 Oct 2026 | 23:00 - 06:00", title: "Sunday Social", lineup: "Artista P, Artista Q", ticketsFrom: 25, vipFrom: 150, tint: ["#1f8a70", "#062a22"] },
-  { date: "Thu, 08 Oct 2026 | 23:00 - 06:00", title: "House Anthems", lineup: "Artista R, Artista S", ticketsFrom: 30, vipFrom: 175, tint: ["#d63a7a", "#3a0822"] },
-  { date: "Fri, 09 Oct 2026 | 23:00 - 06:00", title: "Techno Rituals", lineup: "Artista T, Artista U, Artista V", ticketsFrom: 40, vipFrom: 300, tint: ["#555", "#0a0a0a"] },
-  { date: "Sat, 10 Oct 2026 | 23:00 - 06:00", title: "Grand Finale", lineup: "Artista Z, Special guests", ticketsFrom: 50, vipFrom: 400, tint: ["#c8a24a", "#3a2a06"] },
+  { day: "2026-09-30", hours: "23:00 - 06:00", title: "Opening Night", lineup: "Artista A, Artista B, Artista C", ticketsFrom: 30, vipFrom: 175, tint: ["#d9f5e6", "#6fae8c"] },
+  { day: "2026-10-01", hours: "23:00 - 06:00", title: "Disco Fever | Closing Party", lineup: "Artista D, Artista E, Artista F, Artista G", ticketsFrom: 30, vipFrom: 150, tint: ["#16c47a", "#04301c"] },
+  { day: "2026-10-02", hours: "23:00 - 06:00", title: "Deep Sessions", lineup: "Artista H, Artista I, Artista L", ticketsFrom: 85, vipFrom: 450, tint: ["#1e5a50", "#03110e"] },
+  { day: "2026-10-03", hours: "23:00 - 06:00", title: "Season Closing Party", lineup: "Artista M, Artista N, Artista O", ticketsFrom: 30, vipFrom: 220, tint: ["#8ee04a", "#1a3a06"] },
+  { day: "2026-10-04", hours: "23:00 - 06:00", title: "Sunday Social", lineup: "Artista P, Artista Q", ticketsFrom: 25, vipFrom: 150, tint: ["#1f8a70", "#062a22"] },
+  { day: "2026-10-08", hours: "23:00 - 06:00", title: "House Anthems", lineup: "Artista R, Artista S", ticketsFrom: 30, vipFrom: 175, tint: ["#d63a7a", "#3a0822"] },
+  { day: "2026-10-09", hours: "23:00 - 06:00", title: "Techno Rituals", lineup: "Artista T, Artista U, Artista V", ticketsFrom: 40, vipFrom: 300, tint: ["#555", "#0a0a0a"] },
+  { day: "2026-10-10", hours: "23:00 - 06:00", title: "Grand Finale", lineup: "Artista Z, Special guests", ticketsFrom: 50, vipFrom: 400, tint: ["#c8a24a", "#3a2a06"] },
 ];
 
-export const experiences: (Placeholder & { title: string; href: string })[] = [
-  { title: "Vip", href: "#", tint: ["#39ff8f", "#03331a"] },
-  { title: "Dine", href: "#", tint: ["#0f8a4f", "#021a0e"] },
+// I titoli di queste due card sono in `text` (experiences).
+export const experiences: (Placeholder & { href: string })[] = [
+  { href: "#", tint: ["#39ff8f", "#03331a"] },
+  { href: "#", tint: ["#0f8a4f", "#021a0e"] },
 ];
 
 export const stayAndPlay: (Placeholder & { title: string })[] = [
@@ -65,7 +46,6 @@ export const stayAndPlay: (Placeholder & { title: string })[] = [
 
 export const familia = {
   title: "La Familia",
-  subtitle: "Become a part of the family",
   items: [
     { title: "Beach Club", tint: ["#9fd3e6", "#e9dcbc"] },
     { title: "Hotel", tint: ["#b86a6a", "#1a1020"] },
@@ -76,9 +56,86 @@ export const familia = {
   ] as (Placeholder & { title: string })[],
 };
 
-export const footer = {
-  address: "Indirizzo del locale, Città",
-  email: "info@example.com",
-  socials: ["Instagram", "TikTok", "Facebook", "YouTube", "Spotify"],
-  links: ["Privacy policy", "Cookie policy", "Terms & conditions", "Work with us"],
+export const socials = ["Instagram", "TikTok", "Facebook", "YouTube", "Spotify"];
+
+// Tutti i testi del sito nelle due lingue. Nomi propri (eventi, artisti,
+// locali) restano uguali e stanno nei dati sopra.
+const en = {
+  langSwitch: "IT",
+  tagline: "Electronic music",
+  nav: ["Buy tickets", "Book VIP zone", "Restaurant", "Collection"],
+  menu: ["Events", "VIP", "Restaurant", "Stay & Play", "La Familia", "Contact"],
+  promoTitle: "Save up to 70% on drinks & water",
+  promoNote: "*Available only online",
+  upcoming: "Upcoming events",
+  lineup: "Lineup",
+  ticketsFrom: "Buy tickets from",
+  vipFrom: "Book VIP zone from",
+  vipNote: "Receive complimentary drinks equal to the booking value",
+  experiences: ["Vip", "Dine"],
+  stay: "Stay & Play",
+  familiaSubtitle: "Become a part of the family",
+  address: "Venue address, City",
+  footerLinks: ["Privacy policy", "Cookie policy", "Terms & conditions", "Work with us"],
+  rights: "All rights reserved.",
+  prev: "Previous",
+  next: "Next",
+  goTo: "Go to",
+  cookie: {
+    tabs: ["Consent", "Details", "About cookies"],
+    title: "This website uses cookies",
+    body: "We use cookies to personalise content and ads, to provide social media features and to analyse our traffic. You can choose which categories to accept.",
+    details: "The detailed list of cookies used by this site will go here.",
+    about: "Cookies are small text files that websites store on your device.",
+    categories: ["Necessary", "Preferences", "Statistics", "Marketing"],
+    reject: "Deny",
+    acceptSelected: "Allow selection",
+    acceptAll: "Allow all",
+  },
 };
+
+const it: typeof en = {
+  langSwitch: "ENG",
+  tagline: "Musica elettronica",
+  nav: ["Biglietti", "Prenota area VIP", "Ristorante", "Collection"],
+  menu: ["Eventi", "VIP", "Ristorante", "Stay & Play", "La Familia", "Contatti"],
+  promoTitle: "Risparmia fino al 70% su drink e acqua",
+  promoNote: "*Disponibile solo online",
+  upcoming: "Prossimi eventi",
+  lineup: "Lineup",
+  ticketsFrom: "Biglietti da",
+  vipFrom: "Area VIP da",
+  vipNote: "Ricevi drink omaggio pari al valore della prenotazione",
+  experiences: ["Vip", "Cena"],
+  stay: "Stay & Play",
+  familiaSubtitle: "Entra a far parte della famiglia",
+  address: "Indirizzo del locale, Città",
+  footerLinks: ["Privacy policy", "Cookie policy", "Termini e condizioni", "Lavora con noi"],
+  rights: "Tutti i diritti riservati.",
+  prev: "Precedente",
+  next: "Successivo",
+  goTo: "Vai a",
+  cookie: {
+    tabs: ["Consenso", "Dettagli", "Informazioni sui cookie"],
+    title: "Questo sito web utilizza i cookie",
+    body: "Utilizziamo i cookie per personalizzare contenuti ed annunci, per fornire funzionalità dei social media e per analizzare il nostro traffico. Puoi scegliere quali categorie accettare.",
+    details: "Qui andrà l'elenco dettagliato dei cookie usati dal sito.",
+    about: "I cookie sono piccoli file di testo che i siti salvano sul tuo dispositivo.",
+    categories: ["Necessari", "Preferenze", "Statistiche", "Marketing"],
+    reject: "Rifiuta",
+    acceptSelected: "Accetta selezionati",
+    acceptAll: "Accetta tutti",
+  },
+};
+
+export const text = { en, it };
+
+// "Wed, 30 Sept 2026" / "Mer, 30 Set 2026"
+export function formatDay(day: string, lang: "en" | "it") {
+  const parts = new Intl.DateTimeFormat(lang === "it" ? "it-IT" : "en-GB", {
+    weekday: "short", day: "2-digit", month: "short", year: "numeric", timeZone: "UTC",
+  }).formatToParts(new Date(`${day}T12:00:00Z`));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value.replace(".", "") ?? "";
+  const cap = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
+  return `${cap(get("weekday"))}, ${get("day")} ${cap(get("month"))} ${get("year")}`;
+}

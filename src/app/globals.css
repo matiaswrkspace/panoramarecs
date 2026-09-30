@@ -89,6 +89,13 @@ ul { list-style: none; }
 .menu--open li { opacity: 1; transform: none; transition-duration: 0.45s; }
 .menu a { display: block; padding: 8px; font-size: clamp(30px, min(6vw, 8.5vh), 64px); font-weight: 700; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
 .menu a:hover { color: #fff; }
+.menu__lang { margin-top: 28px; }
+.menu__lang button {
+  padding: 10px 28px; border: 2px solid var(--neon); border-radius: 999px;
+  font-size: clamp(18px, 2vw, 24px); font-weight: 700; letter-spacing: 0.12em; color: var(--neon);
+  transition: background 0.2s, color 0.2s;
+}
+.menu__lang button:hover { background: var(--neon); color: #04130b; }
 
 /* ---------- Hero ---------- */
 .hero { position: relative; min-height: 100svh; overflow: hidden; display: grid; place-items: center; text-align: center; }

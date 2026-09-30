@@ -4,7 +4,9 @@ import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type R
 
 // Scorrimento orizzontale con snap, frecce e (opzionale) pallini.
 // Con il mouse si trascina tenendo premuto; sul touch scorre nativamente.
-export default function Carousel({ children, dots = false, className = "" }: { children: ReactNode[]; dots?: boolean; className?: string }) {
+type Labels = { prev: string; next: string; goTo: string };
+
+export default function Carousel({ children, dots = false, className = "", labels }: { children: ReactNode[]; dots?: boolean; className?: string; labels: Labels }) {
   const track = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [atEnd, setAtEnd] = useState(false);
@@ -118,13 +120,13 @@ export default function Carousel({ children, dots = false, className = "" }: { c
         {dots && (
           <div className="carousel__dots">
             {Array.from({ length: stops }, (_, i) => (
-              <button key={i} aria-label={`Vai a ${i + 1}`} className={i === index ? "active" : ""} onClick={() => goTo(i)} />
+              <button key={i} aria-label={`${labels.goTo} ${i + 1}`} className={i === index ? "active" : ""} onClick={() => goTo(i)} />
             ))}
           </div>
         )}
         <div className="carousel__arrows">
-          <button aria-label="Precedente" disabled={index === 0} onClick={() => goTo(Math.max(0, index - 1))}>‹</button>
-          <button aria-label="Successivo" disabled={atEnd} onClick={() => goTo(Math.min(stops - 1, index + 1))}>›</button>
+          <button aria-label={labels.prev} disabled={index === 0} onClick={() => goTo(Math.max(0, index - 1))}>‹</button>
+          <button aria-label={labels.next} disabled={atEnd} onClick={() => goTo(Math.min(stops - 1, index + 1))}>›</button>
         </div>
       </div>
     </div>

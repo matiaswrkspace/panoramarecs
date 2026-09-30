@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import { useLang } from "@/i18n";
 
 const KEY = "cookie-consent";
-const tabs = ["Consenso", "Dettagli", "Informazioni sui cookie"];
 const categories = [
-  { id: "necessary", label: "Necessari", locked: true },
-  { id: "preferences", label: "Preferenze" },
-  { id: "statistics", label: "Statistiche" },
-  { id: "marketing", label: "Marketing" },
+  { id: "necessary", locked: true },
+  { id: "preferences" },
+  { id: "statistics" },
+  { id: "marketing" },
 ];
 
 const noop = () => () => {};
@@ -21,6 +21,8 @@ function readConsent() {
 }
 
 export default function CookieBanner() {
+  const { t } = useLang();
+  const c = t.cookie;
   const [dismissed, setDismissed] = useState(false);
   // Sul server risulta "già scelto", così il banner compare solo nel browser.
   const stored = useSyncExternalStore(noop, readConsent, () => "server");
@@ -40,41 +42,38 @@ export default function CookieBanner() {
     <div className="cookie-overlay">
       <div className="cookie" role="dialog" aria-modal="true" aria-label="Cookie">
         <div className="cookie__tabs">
-          {tabs.map((t, i) => (
-            <button key={t} className={i === tab ? "active" : ""} onClick={() => setTab(i)}>{t}</button>
+          {c.tabs.map((label, i) => (
+            <button key={i} className={i === tab ? "active" : ""} onClick={() => setTab(i)}>{label}</button>
           ))}
         </div>
         <div className="cookie__body">
           {tab === 0 && (
             <>
-              <h2>Questo sito web utilizza i cookie</h2>
-              <p>
-                Utilizziamo i cookie per personalizzare contenuti ed annunci, per fornire funzionalità dei social media
-                e per analizzare il nostro traffico. Puoi scegliere quali categorie accettare.
-              </p>
+              <h2>{c.title}</h2>
+              <p>{c.body}</p>
             </>
           )}
-          {tab === 1 && <p>Qui andrà l&apos;elenco dettagliato dei cookie usati dal sito.</p>}
-          {tab === 2 && <p>I cookie sono piccoli file di testo che i siti salvano sul tuo dispositivo.</p>}
+          {tab === 1 && <p>{c.details}</p>}
+          {tab === 2 && <p>{c.about}</p>}
         </div>
         <div className="cookie__toggles">
-          {categories.map((c) => (
-            <label key={c.id}>
-              <span>{c.label}</span>
+          {categories.map((cat, i) => (
+            <label key={cat.id}>
+              <span>{c.categories[i]}</span>
               <input
                 type="checkbox"
                 className="switch"
-                checked={!!chosen[c.id]}
-                disabled={c.locked}
-                onChange={(e) => setChosen({ ...chosen, [c.id]: e.target.checked })}
+                checked={!!chosen[cat.id]}
+                disabled={cat.locked}
+                onChange={(e) => setChosen({ ...chosen, [cat.id]: e.target.checked })}
               />
             </label>
           ))}
         </div>
         <div className="cookie__actions">
-          <button className="btn-outline" onClick={() => save({ necessary: true })}>Rifiuta</button>
-          <button className="btn-outline" onClick={() => save(chosen)}>Accetta selezionati</button>
-          <button className="btn-solid" onClick={() => save(Object.fromEntries(categories.map((c) => [c.id, true])))}>Accetta tutti</button>
+          <button className="btn-outline" onClick={() => save({ necessary: true })}>{c.reject}</button>
+          <button className="btn-outline" onClick={() => save(chosen)}>{c.acceptSelected}</button>
+          <button className="btn-solid" onClick={() => save(Object.fromEntries(categories.map((cat) => [cat.id, true])))}>{c.acceptAll}</button>
         </div>
       </div>
     </div>
