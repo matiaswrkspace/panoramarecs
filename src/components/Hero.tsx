@@ -1,10 +1,6 @@
-"use client";
-
-import { useLang } from "@/i18n";
 import Logo from "./Logo";
 
-export default function Hero() {
-  const { t } = useLang();
+export default function Hero({ tagline }: { tagline: string }) {
   return (
     <section className="hero" id="top">
       {/* Sfondo segnaposto: fasci di luce animati. Può diventare un <video>. */}
@@ -19,7 +15,7 @@ export default function Hero() {
       </div>
       <div className="hero__content">
         <Logo as="h1" className="hero__logo" />
-        <p className="hero__tagline">{t.tagline}</p>
+        <p className="hero__tagline">{tagline}</p>
       </div>
     </section>
   );

@@ -59,7 +59,7 @@ ul { list-style: none; }
 /* Tremolio da insegna al neon, ogni tanto */
 @keyframes neon {
   0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
-  20%, 24%, 55% { opacity: 0.55; text-shadow: none; }
+  20%, 24%, 55% { opacity: 0.55; }
 }
 .header__logo { display: flex; }
 .header__logo .logo { font-size: 34px; line-height: 1; padding-bottom: 4px; }
@@ -76,7 +76,7 @@ ul { list-style: none; }
 /* Il menu è una tendina: scende all'apertura e risale alla chiusura */
 .menu {
   position: fixed; inset: 0; z-index: 40;
-  background: rgba(7, 6, 11, 0.97); backdrop-filter: blur(10px);
+  background: rgba(4, 8, 6, 0.98);
   display: grid; place-items: center;
   transform: translateY(-100%); visibility: hidden;
   transition: transform 0.6s cubic-bezier(0.77, 0, 0.18, 1), visibility 0s linear 0.6s;
@@ -104,7 +104,7 @@ ul { list-style: none; }
 .beam {
   position: absolute; top: -20%; width: 90px; height: 90%;
   background: linear-gradient(to bottom, rgba(57, 255, 143, 0.5), transparent);
-  filter: blur(14px); transform-origin: top center; mix-blend-mode: screen;
+  filter: blur(14px); transform-origin: top center; will-change: transform;
   animation: sweep 7s ease-in-out infinite alternate;
 }
 .beam--1 { left: 15%; --a: -25deg; --b: 10deg; }
@@ -115,12 +115,12 @@ ul { list-style: none; }
   position: absolute; left: 50%; top: 42%; width: 140vmax; height: 2px;
   background: linear-gradient(90deg, transparent, var(--neon) 30%, transparent 70%);
   box-shadow: 0 0 12px var(--neon); opacity: 0.45; transform-origin: 0 50%;
-  animation: laser 6s ease-in-out infinite alternate;
+  animation: laser 6s ease-in-out infinite alternate; will-change: transform;
 }
 .laser--2 { animation-duration: 8s; animation-delay: -3s; }
 .laser--3 { animation-duration: 10s; animation-delay: -5s; opacity: 0.3; }
 @keyframes laser { from { transform: rotate(160deg); } to { transform: rotate(250deg); } }
-.hero__bg::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 40% at 50% 20%, rgba(57, 255, 143, 0.18), transparent); animation: pulse 2.4s ease-in-out infinite; }
+.hero__bg::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 40% at 50% 20%, rgba(57, 255, 143, 0.18), transparent); animation: pulse 2.4s ease-in-out infinite; will-change: opacity; }
 @keyframes pulse { 50% { opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { .beam, .laser, .logo, .hero__bg::before { animation: none; } }
 @keyframes sweep { from { transform: rotate(var(--a)); } to { transform: rotate(var(--b)); } }
@@ -130,27 +130,36 @@ ul { list-style: none; }
 .hero__tagline { margin-top: clamp(40px, 10vh, 120px); font-size: clamp(18px, 2vw, 30px); text-transform: uppercase; letter-spacing: 0.35em; color: var(--muted); }
 
 /* ---------- Cookie ---------- */
-.cookie-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: rgba(0, 0, 0, 0.25); }
-.cookie { width: min(900px, 100%); max-height: calc(100svh - 32px); overflow: auto; background: #fff; color: #141414; border-radius: 8px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); font-family: system-ui, sans-serif; }
-.cookie__tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #ddd; }
-.cookie__tabs button { padding: 18px 8px; font-weight: 600; font-size: 15px; border-bottom: 2px solid transparent; }
-.cookie__tabs button.active { color: var(--accent); border-color: var(--accent); }
-.cookie__body { padding: 24px 22px; }
-.cookie__body h2 { font-size: 15px; margin-bottom: 12px; }
-.cookie__body p { font-size: 14.5px; line-height: 1.65; letter-spacing: 0.01em; }
-.cookie__toggles { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
-.cookie__toggles label { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 22px 8px; font-weight: 600; font-size: 15px; cursor: pointer; }
-.cookie__toggles label + label { border-left: 1px solid #ddd; }
-.switch { appearance: none; width: 57px; height: 32px; border-radius: 99px; background: #141414; position: relative; cursor: pointer; transition: background 0.2s; }
+/* Pannello Panorama ancorato in basso al centro: la pagina resta visibile e usabile. */
+.cookie {
+  position: fixed; z-index: 100; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: min(880px, 100%); max-height: 80svh; overflow: auto;
+  padding: 24px 28px 20px; border: 1px solid rgba(57, 255, 143, 0.35); border-bottom: 0; border-radius: 22px 22px 0 0;
+  background: linear-gradient(180deg, rgba(10, 32, 21, 0.97), rgba(4, 10, 7, 0.98));
+  box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(57, 255, 143, 0.12);
+  animation: cookie-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes cookie-in { from { transform: translate(-50%, 100%); } }
+.cookie__head { display: flex; gap: 22px; align-items: center; }
+.cookie__logo { font-size: 46px; line-height: 1.1; flex-shrink: 0; animation: none; }
+.cookie h2 { font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.cookie p { font-size: 14.5px; line-height: 1.6; color: var(--muted); }
+.cookie p a { color: var(--neon-soft); text-decoration: underline; text-underline-offset: 3px; }
+.cookie__toggles { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.cookie__toggles label { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 500; cursor: pointer; }
+.switch { appearance: none; width: 57px; height: 32px; border-radius: 99px; background: rgba(255, 255, 255, 0.18); position: relative; flex-shrink: 0; cursor: pointer; transition: background 0.2s; }
 .switch::after { content: ""; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
 .switch:checked { background: var(--accent); }
 .switch:checked::after { transform: translateX(25px); }
-.switch:disabled { cursor: default; }
-.cookie__actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px 22px 22px; }
-.cookie__actions button { padding: 18px 8px; border-radius: 4px; font-weight: 600; font-size: 15px; }
-.btn-outline { border: 2px solid var(--accent) !important; }
-.btn-solid { background: var(--accent) !important; color: #fff !important; }
-.btn-solid:hover { background: var(--accent-hover) !important; }
+.switch:disabled { cursor: default; opacity: 0.7; }
+.cookie__actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+.cookie__btn {
+  padding: 13px 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: background 0.2s, border-color 0.2s;
+}
+.cookie__btn:hover { background: rgba(255, 255, 255, 0.08); border-color: #fff; }
+.cookie__btn--solid { background: var(--accent); border-color: var(--accent); }
+.cookie__btn--solid:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
 /* ---------- Titoli ---------- */
 .section-title { text-align: center; font-weight: 700; text-transform: uppercase; font-size: clamp(36px, 4vw, 62px); letter-spacing: -0.01em; }
@@ -193,7 +202,7 @@ ul { list-style: none; }
   transition: transform 0.35s, box-shadow 0.35s;
 }
 .event:hover { transform: translateY(-10px); box-shadow: 0 0 40px rgba(57, 255, 143, 0.3); }
-.event__poster { aspect-ratio: 1; border-radius: 14px; }
+.event__poster { position: relative; overflow: hidden; aspect-ratio: 1; border-radius: 14px; }
 .event__date { margin-top: 16px; padding: 0 4px; font-size: 21px; font-weight: 300; color: var(--muted); }
 .event__title { margin-top: 10px; padding: 0 4px; font-size: 19px; font-weight: 500; text-transform: uppercase; line-height: 1.1; }
 .event__lineup { margin-top: 10px; padding: 0 4px; font-size: 14px; color: var(--muted); line-height: 1.55; min-height: 3.1em; }
@@ -216,7 +225,7 @@ ul { list-style: none; }
   display: flex; flex-direction: column; align-items: center; padding-top: 5%;
 }
 .experience h2 { position: relative; z-index: 1; font-size: clamp(90px, 11vw, 190px); line-height: 0.9; }
-.experience__art { width: 45%; aspect-ratio: 1; border-radius: 50%; margin-top: -4%; filter: blur(0.5px); transition: transform 0.5s; }
+.experience__art { position: relative; overflow: hidden; width: 45%; aspect-ratio: 1; border-radius: 50%; margin-top: -4%; filter: blur(0.5px); transition: transform 0.5s; }
 .experience:hover .experience__art { transform: scale(1.08) rotate(-4deg); }
 
 /* ---------- Stay & Play ---------- */
@@ -251,7 +260,8 @@ ul { list-style: none; }
 .familia__visual .visual.active { opacity: 1; }
 
 /* ---------- Segnaposto immagini ---------- */
-.visual { display: block; width: 100%; object-fit: cover; }
+.visual { display: block; width: 100%; }
+.visual img { object-fit: cover; }
 .visual--placeholder { display: grid; place-items: center; }
 .visual--placeholder span { padding: 12px; text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 15px; color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4); }
 
@@ -264,6 +274,9 @@ ul { list-style: none; }
 .footer__cols a { text-transform: uppercase; font-weight: 500; color: var(--muted); transition: color 0.2s; }
 .footer__cols a:hover { color: #fff; }
 .footer__copy { grid-column: 1 / -1; font-size: 13px; color: var(--muted); }
+
+/* ---------- Prestazioni ---------- */
+.experiences, .stay, .familia, .footer { content-visibility: auto; contain-intrinsic-size: auto 900px; }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 900px) {
@@ -278,7 +291,8 @@ ul { list-style: none; }
   .carousel__dots { gap: 10px; }
   .footer { grid-template-columns: 1fr; }
   .footer__cols { gap: 40px; }
-  .cookie__toggles { grid-template-columns: repeat(2, 1fr); }
-  .cookie__toggles label:nth-child(3) { border-left: 0; }
+  .cookie { padding: 20px 16px 16px; }
+  .cookie__head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .cookie__logo { font-size: 36px; }
   .cookie__actions { grid-template-columns: 1fr; }
 }

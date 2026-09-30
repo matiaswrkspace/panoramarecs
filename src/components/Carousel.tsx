@@ -20,27 +20,41 @@ export default function Carousel({ children, dots = false, className = "", label
   useEffect(() => {
     const el = track.current;
     if (!el) return;
-    const update = () => {
-      const max = el.scrollWidth - el.clientWidth;
-      let count = 1;
-      while (count < el.children.length && offsetOf(el, count) < max - 2) count++;
-      if (count < el.children.length && max > 2) count++;
-      let nearest = 0;
-      for (let i = 1; i < count; i++) {
+    // Le fermate si ricalcolano solo quando cambiano le dimensioni:
+    // durante lo scorrimento si confronta soltanto la posizione.
+    let offsets: number[] = [];
+    let max = 0;
+    let frame = 0;
+    const measure = () => {
+      max = el.scrollWidth - el.clientWidth;
+      offsets = [0];
+      for (let i = 1; i < el.children.length; i++) {
         const o = Math.min(offsetOf(el, i), max);
-        if (Math.abs(o - el.scrollLeft) < Math.abs(Math.min(offsetOf(el, nearest), max) - el.scrollLeft)) nearest = i;
+        if (o - offsets[offsets.length - 1] < 2) break;
+        offsets.push(o);
       }
-      setStops(count);
-      setIndex(nearest);
-      setAtEnd(el.scrollLeft >= max - 2);
+      setStops(offsets.length);
+      onScroll();
     };
-    update();
-    el.addEventListener("scroll", update, { passive: true });
-    const ro = new ResizeObserver(update);
+    const onScroll = () => {
+      frame = 0;
+      const x = el.scrollLeft;
+      let nearest = 0;
+      for (let i = 1; i < offsets.length; i++) if (Math.abs(offsets[i] - x) < Math.abs(offsets[nearest] - x)) nearest = i;
+      setIndex(nearest);
+      setAtEnd(x >= max - 2);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(onScroll);
+    };
+    measure();
+    el.addEventListener("scroll", schedule, { passive: true });
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => {
-      el.removeEventListener("scroll", update);
+      el.removeEventListener("scroll", schedule);
       ro.disconnect();
+      cancelAnimationFrame(frame);
     };
   }, []);
 

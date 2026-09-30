@@ -82,11 +82,10 @@ const en = {
   next: "Next",
   goTo: "Go to",
   cookie: {
-    tabs: ["Consent", "Details", "About cookies"],
-    title: "This website uses cookies",
-    body: "We use cookies to personalise content and ads, to provide social media features and to analyse our traffic. You can choose which categories to accept.",
-    details: "The detailed list of cookies used by this site will go here.",
-    about: "Cookies are small text files that websites store on your device.",
+    title: "Before the night starts",
+    body: "We use cookies to make the site work, remember your preferences and understand how it is used. Choose what to allow.",
+    policy: "Cookie policy",
+    customise: "Customise",
     categories: ["Necessary", "Preferences", "Statistics", "Marketing"],
     reject: "Deny",
     acceptSelected: "Allow selection",
@@ -116,11 +115,10 @@ const it: typeof en = {
   next: "Successivo",
   goTo: "Vai a",
   cookie: {
-    tabs: ["Consenso", "Dettagli", "Informazioni sui cookie"],
-    title: "Questo sito web utilizza i cookie",
-    body: "Utilizziamo i cookie per personalizzare contenuti ed annunci, per fornire funzionalità dei social media e per analizzare il nostro traffico. Puoi scegliere quali categorie accettare.",
-    details: "Qui andrà l'elenco dettagliato dei cookie usati dal sito.",
-    about: "I cookie sono piccoli file di testo che i siti salvano sul tuo dispositivo.",
+    title: "Prima che inizi la notte",
+    body: "Usiamo i cookie per far funzionare il sito, ricordare le tue preferenze e capire come viene usato. Scegli cosa consentire.",
+    policy: "Cookie policy",
+    customise: "Personalizza",
     categories: ["Necessari", "Preferenze", "Statistiche", "Marketing"],
     reject: "Rifiuta",
     acceptSelected: "Accetta selezionati",
@@ -129,9 +127,11 @@ const it: typeof en = {
 };
 
 export const text = { en, it };
+export type Lang = keyof typeof text;
+export type Text = typeof en;
 
 // "Wed, 30 Sept 2026" / "Mer, 30 Set 2026"
-export function formatDay(day: string, lang: "en" | "it") {
+export function formatDay(day: string, lang: Lang) {
   const parts = new Intl.DateTimeFormat(lang === "it" ? "it-IT" : "en-GB", {
     weekday: "short", day: "2-digit", month: "short", year: "numeric", timeZone: "UTC",
   }).formatToParts(new Date(`${day}T12:00:00Z`));

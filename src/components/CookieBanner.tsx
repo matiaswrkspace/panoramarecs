@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { useLang } from "@/i18n";
+import type { Text } from "@/content";
+import Logo from "./Logo";
 
 const KEY = "cookie-consent";
 const categories = [
@@ -20,13 +21,12 @@ function readConsent() {
   }
 }
 
-export default function CookieBanner() {
-  const { t } = useLang();
-  const c = t.cookie;
+// Banner cookie Panorama: pannello scuro in basso al centro, la pagina resta usabile.
+export default function CookieBanner({ c }: { c: Text["cookie"] }) {
   const [dismissed, setDismissed] = useState(false);
   // Sul server risulta "già scelto", così il banner compare solo nel browser.
   const stored = useSyncExternalStore(noop, readConsent, () => "server");
-  const [tab, setTab] = useState(0);
+  const [custom, setCustom] = useState(false);
   const [chosen, setChosen] = useState<Record<string, boolean>>({ necessary: true });
 
   function save(value: Record<string, boolean>) {
@@ -39,27 +39,21 @@ export default function CookieBanner() {
   if (dismissed || stored !== null) return null;
 
   return (
-    <div className="cookie-overlay">
-      <div className="cookie" role="dialog" aria-modal="true" aria-label="Cookie">
-        <div className="cookie__tabs">
-          {c.tabs.map((label, i) => (
-            <button key={i} className={i === tab ? "active" : ""} onClick={() => setTab(i)}>{label}</button>
-          ))}
+    <div className="cookie" role="dialog" aria-label={c.title}>
+      <div className="cookie__head">
+        <Logo className="cookie__logo" />
+        <div>
+          <h2>{c.title}</h2>
+          <p>
+            {c.body} <a href="#footer">{c.policy}</a>
+          </p>
         </div>
-        <div className="cookie__body">
-          {tab === 0 && (
-            <>
-              <h2>{c.title}</h2>
-              <p>{c.body}</p>
-            </>
-          )}
-          {tab === 1 && <p>{c.details}</p>}
-          {tab === 2 && <p>{c.about}</p>}
-        </div>
+      </div>
+
+      {custom && (
         <div className="cookie__toggles">
           {categories.map((cat, i) => (
             <label key={cat.id}>
-              <span>{c.categories[i]}</span>
               <input
                 type="checkbox"
                 className="switch"
@@ -67,14 +61,22 @@ export default function CookieBanner() {
                 disabled={cat.locked}
                 onChange={(e) => setChosen({ ...chosen, [cat.id]: e.target.checked })}
               />
+              <span>{c.categories[i]}</span>
             </label>
           ))}
         </div>
-        <div className="cookie__actions">
-          <button className="btn-outline" onClick={() => save({ necessary: true })}>{c.reject}</button>
-          <button className="btn-outline" onClick={() => save(chosen)}>{c.acceptSelected}</button>
-          <button className="btn-solid" onClick={() => save(Object.fromEntries(categories.map((cat) => [cat.id, true])))}>{c.acceptAll}</button>
-        </div>
+      )}
+
+      <div className="cookie__actions">
+        <button className="cookie__btn" onClick={() => save({ necessary: true })}>{c.reject}</button>
+        {custom ? (
+          <button className="cookie__btn" onClick={() => save(chosen)}>{c.acceptSelected}</button>
+        ) : (
+          <button className="cookie__btn" onClick={() => setCustom(true)}>{c.customise}</button>
+        )}
+        <button className="cookie__btn cookie__btn--solid" onClick={() => save(Object.fromEntries(categories.map((cat) => [cat.id, true])))}>
+          {c.acceptAll}
+        </button>
       </div>
     </div>
   );

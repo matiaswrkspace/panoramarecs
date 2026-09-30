@@ -1,10 +1,15 @@
+import Image from "next/image";
 import type { Placeholder } from "@/content";
 
-// Mostra la foto se c'è, altrimenti un segnaposto sfumato con un'etichetta.
-export default function Visual({ item, label, className = "" }: { item: Placeholder; label?: string; className?: string }) {
+// Mostra la foto se c'è (ottimizzata da next/image), altrimenti un segnaposto
+// sfumato con un'etichetta. Il contenitore deve essere posizionato.
+export default function Visual({ item, label, className = "", sizes = "(max-width: 900px) 90vw, 30vw" }: { item: Placeholder; label?: string; className?: string; sizes?: string }) {
   if (item.image) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={item.image} alt={label ?? ""} className={`visual ${className}`} />;
+    return (
+      <div className={`visual ${className}`}>
+        <Image src={item.image} alt={label ?? ""} fill sizes={sizes} />
+      </div>
+    );
   }
   const [a, b] = item.tint;
   return (

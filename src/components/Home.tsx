@@ -1,7 +1,4 @@
-"use client";
-
-import { brand, events, experiences, formatDay, socials, stayAndPlay } from "@/content";
-import { useLang } from "@/i18n";
+import { brand, events, experiences, formatDay, socials, stayAndPlay, text, type Lang } from "@/content";
 import Carousel from "@/components/Carousel";
 import CookieBanner from "@/components/CookieBanner";
 import Familia from "@/components/Familia";
@@ -10,14 +7,14 @@ import Hero from "@/components/Hero";
 import Logo from "@/components/Logo";
 import Visual from "@/components/Visual";
 
-export default function Home() {
-  const { lang, t } = useLang();
+export default function Home({ lang }: { lang: Lang }) {
+  const t = text[lang];
 
   return (
     <>
-      <Header />
+      <Header lang={lang} nav={t.nav} menu={t.menu} langSwitch={t.langSwitch} />
       <main>
-        <Hero />
+        <Hero tagline={t.tagline} />
 
         <section className="events" id="events">
           <a href="#events" className="promo">
@@ -67,7 +64,7 @@ export default function Home() {
           </Carousel>
         </section>
 
-        <Familia />
+        <Familia subtitle={t.familiaSubtitle} />
       </main>
 
       <footer className="footer" id="footer">
@@ -83,7 +80,7 @@ export default function Home() {
         <p className="footer__copy">© {new Date().getFullYear()} {brand.name}. {t.rights}</p>
       </footer>
 
-      <CookieBanner />
+      <CookieBanner c={t.cookie} />
     </>
   );
 }

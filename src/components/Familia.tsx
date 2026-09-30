@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import { familia } from "@/content";
-import { useLang } from "@/i18n";
 import Visual from "./Visual";
 
-export default function Familia() {
-  const { t } = useLang();
+export default function Familia({ subtitle }: { subtitle: string }) {
   const [active, setActive] = useState(0);
 
   return (
@@ -14,7 +12,7 @@ export default function Familia() {
       <div className="familia__list">
         <div className="familia__head">
           <h2 className="script">{familia.title}</h2>
-          <p>{t.familiaSubtitle}</p>
+          <p>{subtitle}</p>
         </div>
         <ul>
           {familia.items.map((item, i) => (
