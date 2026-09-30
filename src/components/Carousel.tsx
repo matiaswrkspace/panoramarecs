@@ -15,7 +15,7 @@ export default function Carousel({ children, dots = false, className = "", label
   // Le "fermate" sono le posizioni in cui il carosello può davvero fermarsi:
   // le ultime card non possono andare a sinistra oltre la fine, quindi
   // condividono l'ultima fermata. Un pallino per ogni fermata.
-  const [stops, setStops] = useState(1);
+  const [stops, setStops] = useState(children.length);
 
   useEffect(() => {
     const el = track.current;
