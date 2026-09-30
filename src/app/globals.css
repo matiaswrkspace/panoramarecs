@@ -155,6 +155,9 @@ ul { list-style: none; }
   scrollbar-width: none;
 }
 .carousel__track::-webkit-scrollbar { display: none; }
+@media (pointer: fine) { .carousel__track { cursor: grab; } }
+.carousel__track--dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.carousel__track--dragging * { pointer-events: none; }
 .carousel__track > * { scroll-snap-align: start; flex: 0 0 auto; }
 .carousel--flush .carousel__track { padding-left: 6px; padding-right: 6px; }
 .carousel__controls { position: relative; min-height: 50px; padding: 0 var(--gutter); display: flex; justify-content: center; align-items: center; }
