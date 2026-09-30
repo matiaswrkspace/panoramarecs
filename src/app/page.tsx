@@ -5,7 +5,6 @@ import Familia from "@/components/Familia";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Logo from "@/components/Logo";
-import Mark from "@/components/Mark";
 import Visual from "@/components/Visual";
 
 export default function Home() {
@@ -43,7 +42,6 @@ export default function Home() {
         <section className="experiences" id="experiences">
           {experiences.map((x) => (
             <a href={x.href} className="experience" key={x.title}>
-              <span className="experience__mark"><Mark size={46} /></span>
               <h2 className="script">{x.title}</h2>
               <Visual item={x} className="experience__art" />
             </a>
@@ -56,7 +54,6 @@ export default function Home() {
             {stayAndPlay.map((s, i) => (
               <article className="stay__card" key={s.title}>
                 <Visual item={s} className="stay__img" />
-                <span className="stay__mark"><Mark size={48} /></span>
                 <span className="stay__num stay__num--top">{i + 1}</span>
                 <h3 className="stay__title script">{s.title}</h3>
                 <span className="stay__num stay__num--bottom">{i + 1}</span>
