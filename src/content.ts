@@ -7,7 +7,6 @@ export type Placeholder = { image?: string; tint: [string, string] };
 export const brand = {
   name: "Panorama",
   // Il logo è la scritta "Panorama" in corsivo neon (vedi components/Logo.tsx).
-  logoSubtitle: "city heartbeat",
   tagline: "Electronic music",
 };
 

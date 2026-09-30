@@ -16,7 +16,6 @@ export default function Hero() {
       </div>
       <div className="hero__content">
         <Logo as="h1" className="hero__logo" />
-        <p className="hero__subtitle">{brand.logoSubtitle}</p>
         <p className="hero__tagline">{brand.tagline}</p>
       </div>
     </section>

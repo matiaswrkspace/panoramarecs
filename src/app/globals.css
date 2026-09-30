@@ -121,7 +121,6 @@ ul { list-style: none; }
 
 .hero__content { position: relative; padding: 120px var(--gutter) 60px; width: 100%; }
 .hero__logo { font-size: clamp(96px, 19vw, 340px); line-height: 1.1; padding: 0 0.1em; }
-.hero__subtitle { font-family: var(--font-logo), cursive; font-size: clamp(30px, 3.6vw, 60px); color: var(--neon-soft); margin-top: -0.35em; padding-left: 28%; text-shadow: 0 0 12px rgba(57, 255, 143, 0.5); }
 .hero__tagline { margin-top: clamp(40px, 10vh, 120px); font-size: clamp(18px, 2vw, 30px); text-transform: uppercase; letter-spacing: 0.35em; color: var(--muted); }
 
 /* ---------- Cookie ---------- */
