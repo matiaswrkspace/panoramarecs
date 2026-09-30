@@ -10,18 +10,36 @@ export default function Carousel({ children, dots = false, className = "" }: { c
   const [atEnd, setAtEnd] = useState(false);
   const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0, lastX: 0, lastT: 0, velocity: 0 });
 
+  // Le "fermate" sono le posizioni in cui il carosello può davvero fermarsi:
+  // le ultime card non possono andare a sinistra oltre la fine, quindi
+  // condividono l'ultima fermata. Un pallino per ogni fermata.
+  const [stops, setStops] = useState(1);
+
   useEffect(() => {
     const el = track.current;
     if (!el) return;
-    const onScroll = () => {
-      const first = el.children[0] as HTMLElement | undefined;
-      const step = first ? first.offsetWidth + parseFloat(getComputedStyle(el).columnGap || "0") : 1;
-      setIndex(Math.round(el.scrollLeft / step));
-      setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4);
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      let count = 1;
+      while (count < el.children.length && offsetOf(el, count) < max - 2) count++;
+      if (count < el.children.length && max > 2) count++;
+      let nearest = 0;
+      for (let i = 1; i < count; i++) {
+        const o = Math.min(offsetOf(el, i), max);
+        if (Math.abs(o - el.scrollLeft) < Math.abs(Math.min(offsetOf(el, nearest), max) - el.scrollLeft)) nearest = i;
+      }
+      setStops(count);
+      setIndex(nearest);
+      setAtEnd(el.scrollLeft >= max - 2);
     };
-    onScroll();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
   }, []);
 
   function offsetOf(el: HTMLDivElement, i: number) {
@@ -31,7 +49,7 @@ export default function Carousel({ children, dots = false, className = "" }: { c
 
   function goTo(i: number) {
     const el = track.current;
-    if (el && el.children[i]) el.scrollTo({ left: offsetOf(el, i), behavior: "smooth" });
+    if (el && el.children[i]) el.scrollTo({ left: Math.min(offsetOf(el, i), el.scrollWidth - el.clientWidth), behavior: "smooth" });
   }
 
   function onPointerDown(e: PointerEvent<HTMLDivElement>) {
@@ -99,14 +117,14 @@ export default function Carousel({ children, dots = false, className = "" }: { c
       <div className="carousel__controls">
         {dots && (
           <div className="carousel__dots">
-            {children.map((_, i) => (
+            {Array.from({ length: stops }, (_, i) => (
               <button key={i} aria-label={`Vai a ${i + 1}`} className={i === index ? "active" : ""} onClick={() => goTo(i)} />
             ))}
           </div>
         )}
         <div className="carousel__arrows">
           <button aria-label="Precedente" disabled={index === 0} onClick={() => goTo(Math.max(0, index - 1))}>‹</button>
-          <button aria-label="Successivo" disabled={atEnd} onClick={() => goTo(Math.min(children.length - 1, index + 1))}>›</button>
+          <button aria-label="Successivo" disabled={atEnd} onClick={() => goTo(Math.min(stops - 1, index + 1))}>›</button>
         </div>
       </div>
     </div>
