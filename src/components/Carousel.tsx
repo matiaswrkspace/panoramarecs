@@ -55,6 +55,7 @@ export default function Carousel({ children, dots = false, className = "", label
       el.removeEventListener("scroll", schedule);
       ro.disconnect();
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(anim.current);
     };
   }, []);
 
@@ -63,14 +64,62 @@ export default function Carousel({ children, dots = false, className = "", label
     return child.offsetLeft - el.offsetLeft - parseFloat(getComputedStyle(el).paddingLeft);
   }
 
+  // Animazione di scorrimento propria: parte alla velocità del gesto e rallenta
+  // dolcemente (ease-out), invece dello "smooth" del browser che riparte da zero.
+  // Lo snap resta spento durante l'animazione e si riaccende a posizione esatta.
+  const anim = useRef(0);
+
+  function stopAnim() {
+    cancelAnimationFrame(anim.current);
+    anim.current = 0;
+  }
+
+  function animateTo(el: HTMLDivElement, target: number, speed = 0) {
+    stopAnim();
+    const from = el.scrollLeft;
+    const dist = target - from;
+    // Con ease-out cubica la velocità iniziale è 3·dist/durata: scelgo la durata
+    // in modo che coincida con quella del gesto (px/ms), entro limiti ragionevoli.
+    const sameDirection = speed !== 0 && Math.sign(speed) === Math.sign(dist);
+    const duration = Math.min(900, Math.max(380, sameDirection ? (3 * Math.abs(dist)) / Math.abs(speed) : 480));
+    el.classList.add("carousel__track--animating");
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      el.scrollLeft = from + dist * (1 - (1 - t) ** 3);
+      if (t < 1) {
+        anim.current = requestAnimationFrame(step);
+      } else {
+        anim.current = 0;
+        el.classList.remove("carousel__track--animating", "carousel__track--dragging");
+      }
+    };
+    anim.current = requestAnimationFrame(step);
+  }
+
+  function nearestStop(el: HTMLDivElement, x: number) {
+    const max = el.scrollWidth - el.clientWidth;
+    let best = 0;
+    for (let i = 0; i < el.children.length; i++) {
+      const o = Math.min(offsetOf(el, i), max);
+      if (Math.abs(o - x) < Math.abs(best - x)) best = o;
+    }
+    return best;
+  }
+
   function goTo(i: number) {
     const el = track.current;
-    if (el && el.children[i]) el.scrollTo({ left: Math.min(offsetOf(el, i), el.scrollWidth - el.clientWidth), behavior: "smooth" });
+    if (el && el.children[i]) animateTo(el, Math.min(offsetOf(el, i), el.scrollWidth - el.clientWidth));
   }
 
   function onPointerDown(e: PointerEvent<HTMLDivElement>) {
     const el = track.current;
     if (!el || e.pointerType !== "mouse" || e.button !== 0) return;
+    // Afferrare durante un'animazione la ferma lì dov'è.
+    if (anim.current) {
+      stopAnim();
+      el.classList.add("carousel__track--dragging");
+    }
     drag.current = { active: true, moved: false, startX: e.clientX, startScroll: el.scrollLeft, lastX: e.clientX, lastT: e.timeStamp, velocity: 0 };
 
     const onMove = (ev: globalThis.PointerEvent) => {
@@ -82,28 +131,27 @@ export default function Carousel({ children, dots = false, className = "", label
       }
       if (!d.moved) return;
       const dt = ev.timeStamp - d.lastT;
-      if (dt > 0) d.velocity = (ev.clientX - d.lastX) / dt;
+      // Velocità del gesto (px/ms, verso lo scorrimento), smussata per togliere il rumore del mouse.
+      if (dt > 0) d.velocity = 0.7 * (-(ev.clientX - d.lastX) / dt) + 0.3 * d.velocity;
       d.lastX = ev.clientX;
       d.lastT = ev.timeStamp;
       el.scrollLeft = d.startScroll - dx;
     };
 
-    const onUp = () => {
+    const onUp = (ev: globalThis.PointerEvent) => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       const d = drag.current;
       d.active = false;
-      if (!d.moved) return;
-      // Slancio: una trascinata veloce porta avanti di qualche card in più.
-      const target = el.scrollLeft - d.velocity * 250;
-      let nearest = 0;
-      for (let i = 1; i < el.children.length; i++) {
-        if (Math.abs(offsetOf(el, i) - target) < Math.abs(offsetOf(el, nearest) - target)) nearest = i;
+      if (!d.moved) {
+        el.classList.remove("carousel__track--dragging");
+        return;
       }
-      const max = el.scrollWidth - el.clientWidth;
-      el.scrollTo({ left: Math.min(offsetOf(el, nearest), max), behavior: "smooth" });
-      // Lo snap torna attivo quando lo scorrimento animato è finito.
-      setTimeout(() => el.classList.remove("carousel__track--dragging"), 450);
+      // Se il mouse era fermo prima di rilasciare, niente slancio.
+      const speed = ev.timeStamp - d.lastT > 80 ? 0 : d.velocity;
+      // Slancio: la distanza in più cresce con la velocità del gesto.
+      const projected = el.scrollLeft + speed * 220;
+      animateTo(el, nearestStop(el, projected), speed);
     };
 
     window.addEventListener("pointermove", onMove);

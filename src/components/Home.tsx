@@ -5,6 +5,7 @@ import Familia from "@/components/Familia";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Logo from "@/components/Logo";
+import PalmArt from "@/components/PalmArt";
 import Visual from "@/components/Visual";
 
 export default function Home({ lang }: { lang: Lang }) {
@@ -45,7 +46,11 @@ export default function Home({ lang }: { lang: Lang }) {
           {experiences.map((x, i) => (
             <a href={x.href} className="experience" key={i}>
               <h2 className="script">{t.experiences[i]}</h2>
-              <Visual item={x} className="experience__art" />
+              {x.image ? (
+                <Visual item={{ image: x.image, tint: ["#000", "#000"] }} className="experience__art" />
+              ) : (
+                <PalmArt variant={x.art} className="experience__art" />
+              )}
             </a>
           ))}
         </section>

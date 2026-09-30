@@ -31,9 +31,10 @@ export const events: Event[] = [
 ];
 
 // I titoli di queste due card sono in `text` (experiences).
-export const experiences: (Placeholder & { href: string })[] = [
-  { href: "#", tint: ["#39ff8f", "#03331a"] },
-  { href: "#", tint: ["#0f8a4f", "#021a0e"] },
+// `art` sceglie l'illustrazione a palme; con `image` si usa invece una foto.
+export const experiences: { href: string; art: "vip" | "dine"; image?: string }[] = [
+  { href: "#", art: "vip" },
+  { href: "#", art: "dine" },
 ];
 
 export const stayAndPlay: (Placeholder & { title: string })[] = [

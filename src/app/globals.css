@@ -184,6 +184,7 @@ ul { list-style: none; }
 .carousel__track::-webkit-scrollbar { display: none; }
 @media (pointer: fine) { .carousel__track { cursor: grab; } }
 .carousel__track--dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.carousel__track--animating { scroll-snap-type: none; }
 .carousel__track--dragging * { pointer-events: none; }
 .carousel__track > * { scroll-snap-align: start; flex: 0 0 auto; }
 .carousel--flush .carousel__track { padding-left: 6px; padding-right: 6px; }
@@ -225,8 +226,17 @@ ul { list-style: none; }
   display: flex; flex-direction: column; align-items: center; padding-top: 5%;
 }
 .experience h2 { position: relative; z-index: 1; font-size: clamp(90px, 11vw, 190px); line-height: 0.9; }
-.experience__art { position: relative; overflow: hidden; width: 45%; aspect-ratio: 1; border-radius: 50%; margin-top: -4%; filter: blur(0.5px); transition: transform 0.5s; }
-.experience:hover .experience__art { transform: scale(1.08) rotate(-4deg); }
+.experience__art { position: relative; overflow: hidden; width: 52%; aspect-ratio: 1; margin-top: -2%; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.experience:hover .experience__art { transform: scale(1.06) rotate(-3deg); }
+
+/* Illustrazioni neon a palme */
+.palm-art { overflow: visible; filter: drop-shadow(0 0 4px rgba(57, 255, 143, 0.9)) drop-shadow(0 0 14px rgba(57, 255, 143, 0.45)); }
+.palm-art__line { fill: none; stroke: var(--neon-soft); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.palm-art__thin { stroke-width: 1.3; }
+.palm-art__fill { fill: var(--neon-soft); }
+.palm-art__leaf { fill: rgba(57, 255, 143, 0.14); stroke-width: 1.6; }
+.palm-art__soft { opacity: 0.55; }
+.palm-art__cut { stroke: #06120c; }
 
 /* ---------- Stay & Play ---------- */
 .stay { padding: 60px 0 40px; }
