@@ -4,7 +4,7 @@
 
 export type Placeholder = { image?: string; tint: [string, string] };
 
-export const brand = { name: "Panorama", email: "info@example.com" };
+export const brand = { name: "Panorama", email: "info@panoramarecs.com" };
 
 // Collegamenti di barra e menu; le etichette sono in `text` qui sotto.
 export const navHrefs = ["#events", "#experiences", "#experiences", "#familia"];
@@ -76,7 +76,7 @@ const en = {
   experiences: ["Vip", "Dine"],
   stay: "Stay & Play",
   familiaSubtitle: "Become a part of the family",
-  address: "Venue address, City",
+  address: "Italy, Brescia",
   footerLinks: ["Privacy policy", "Cookie policy", "Terms & conditions", "Work with us"],
   rights: "All rights reserved.",
   prev: "Previous",
@@ -109,7 +109,7 @@ const it: typeof en = {
   experiences: ["Vip", "Cena"],
   stay: "Stay & Play",
   familiaSubtitle: "Entra a far parte della famiglia",
-  address: "Indirizzo del locale, Città",
+  address: "Italia, Brescia",
   footerLinks: ["Privacy policy", "Cookie policy", "Termini e condizioni", "Lavora con noi"],
   rights: "Tutti i diritti riservati.",
   prev: "Precedente",
