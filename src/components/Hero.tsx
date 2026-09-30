@@ -1,5 +1,5 @@
 import { brand } from "@/content";
-import Mark from "./Mark";
+import Logo from "./Logo";
 
 export default function Hero() {
   return (
@@ -15,10 +15,9 @@ export default function Hero() {
         <div className="laser laser--3" />
       </div>
       <div className="hero__content">
-        <p className="hero__kicker script">{brand.heroKicker}</p>
-        <h1 className="hero__word">{brand.heroWord}</h1>
+        <Logo as="h1" className="hero__logo" />
+        <p className="hero__subtitle">{brand.logoSubtitle}</p>
         <p className="hero__tagline">{brand.tagline}</p>
-        <div className="hero__mark"><Mark size={140} /></div>
       </div>
     </section>
   );

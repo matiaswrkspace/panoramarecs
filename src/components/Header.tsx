@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { brand, menu, nav } from "@/content";
-import Mark from "./Mark";
+import Logo from "./Logo";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ export default function Header() {
     <>
       <header className={`header ${scrolled ? "header--scrolled" : ""} ${open ? "header--menu" : ""}`}>
         <a href="#top" className="header__logo" aria-label={brand.name}>
-          <Mark />
+          <Logo />
         </a>
         <nav className="header__nav">
           {nav.map((l) => (

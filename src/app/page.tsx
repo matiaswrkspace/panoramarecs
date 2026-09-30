@@ -4,6 +4,7 @@ import CookieBanner from "@/components/CookieBanner";
 import Familia from "@/components/Familia";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import Logo from "@/components/Logo";
 import Mark from "@/components/Mark";
 import Visual from "@/components/Visual";
 
@@ -69,8 +70,7 @@ export default function Home() {
 
       <footer className="footer" id="footer">
         <div className="footer__brand">
-          <Mark size={56} />
-          <p className="footer__name">{brand.name}</p>
+          <Logo as="p" className="footer__logo" />
           <p>{footer.address}</p>
           <a href={`mailto:${footer.email}`}>{footer.email}</a>
         </div>
