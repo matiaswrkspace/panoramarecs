@@ -48,12 +48,9 @@ export const stayAndPlay: (Placeholder & { title: string })[] = [
 export const familia = {
   title: "La Familia",
   items: [
-    { title: "Beach Club", tint: ["#9fd3e6", "#e9dcbc"] },
-    { title: "Hotel", tint: ["#b86a6a", "#1a1020"] },
-    { title: "Restaurante", tint: ["#c7802e", "#2a1506"] },
-    { title: "Icons", tint: ["#6b7a2a", "#15180a"] },
-    { title: "Collection", tint: ["#7d6bb8", "#120d24"] },
-    { title: "New York", tint: ["#4a5a7a", "#0b0f1c"] },
+    { title: "Circus", tint: ["#c93a5a", "#1c0610"] },
+    { title: "Molo", tint: ["#3f8fb8", "#06141f"] },
+    { title: "River", tint: ["#2fa37a", "#04140e"] },
   ] as (Placeholder & { title: string })[],
 };
 
