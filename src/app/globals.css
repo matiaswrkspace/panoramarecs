@@ -179,6 +179,7 @@ ul { list-style: none; }
 .carousel__track {
   display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory;
   padding: 36px max(var(--gutter), calc((100vw - 1560px) / 2)) 20px;
+  scroll-padding-inline: max(var(--gutter), calc((100vw - 1560px) / 2));
   scrollbar-width: none;
 }
 .carousel__track::-webkit-scrollbar { display: none; }
@@ -187,7 +188,7 @@ ul { list-style: none; }
 .carousel__track--animating { scroll-snap-type: none; }
 .carousel__track--dragging * { pointer-events: none; }
 .carousel__track > * { scroll-snap-align: start; flex: 0 0 auto; }
-.carousel--flush .carousel__track { padding-left: 6px; padding-right: 6px; }
+.carousel--flush .carousel__track { padding-left: 6px; padding-right: 6px; scroll-padding-inline: 6px; }
 .carousel__controls { position: relative; min-height: 50px; padding: 0 var(--gutter); display: flex; justify-content: center; align-items: center; }
 .carousel__dots { display: flex; gap: 20px; }
 .carousel__dots button { width: 15px; height: 15px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); transition: background 0.2s; }
@@ -296,9 +297,12 @@ ul { list-style: none; }
   .familia__list { padding-left: 0; }
   .familia__list button { margin-left: 0; padding: 4px 18px; }
   .familia__list button::before { display: none; }
-  .carousel__arrows { position: static; margin-left: auto; }
-  .carousel__controls { justify-content: space-between; }
-  .carousel__dots { gap: 10px; }
+  /* Caroselli su telefono: una card alla volta, centrata, larga quanto lo schermo */
+  .carousel .carousel__track { gap: 16px; padding-left: 16px; padding-right: 16px; scroll-padding-inline: 16px; }
+  .event, .stay__card { width: calc(100vw - 32px); }
+  .carousel__controls { flex-direction: column; gap: 16px; }
+  .carousel__arrows { position: static; }
+  .carousel__dots { gap: 10px; flex-wrap: wrap; justify-content: center; }
   .footer { grid-template-columns: 1fr; }
   .footer__cols { gap: 40px; }
   .cookie { padding: 20px 16px 16px; }
