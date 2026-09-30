@@ -64,8 +64,8 @@ export default function Carousel({ children, dots = false, className = "", label
     return child.offsetLeft - el.offsetLeft - parseFloat(getComputedStyle(el).paddingLeft);
   }
 
-  // Animazione di scorrimento propria: parte alla velocità del gesto e rallenta
-  // dolcemente (ease-out), invece dello "smooth" del browser che riparte da zero.
+  // Animazione di scorrimento a molla (smorzamento critico): parte dalla velocità
+  // del gesto, anche zero, accelera e si posa sulla card senza scatti né rimbalzi.
   // Lo snap resta spento durante l'animazione e si riaccende a posizione esatta.
   const anim = useRef(0);
 
@@ -76,23 +76,25 @@ export default function Carousel({ children, dots = false, className = "", label
 
   function animateTo(el: HTMLDivElement, target: number, speed = 0) {
     stopAnim();
-    const from = el.scrollLeft;
-    const dist = target - from;
-    // Con ease-out cubica la velocità iniziale è 3·dist/durata: scelgo la durata
-    // in modo che coincida con quella del gesto (px/ms), entro limiti ragionevoli.
-    const sameDirection = speed !== 0 && Math.sign(speed) === Math.sign(dist);
-    const duration = Math.min(900, Math.max(380, sameDirection ? (3 * Math.abs(dist)) / Math.abs(speed) : 480));
+    const w = 10; // rigidezza: più alto = più rapido (assestamento in ~0,6 s)
+    const x0 = el.scrollLeft - target; // distanza iniziale dalla meta
+    // Velocità iniziale in px/s; verso la meta la limito per non superarla.
+    let v0 = speed * 1000;
+    if (Math.sign(v0) === -Math.sign(x0)) v0 = Math.sign(v0) * Math.min(Math.abs(v0), w * Math.abs(x0) * 0.95);
     el.classList.add("carousel__track--animating");
     const start = performance.now();
     const step = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      el.scrollLeft = from + dist * (1 - (1 - t) ** 3);
-      if (t < 1) {
-        anim.current = requestAnimationFrame(step);
-      } else {
+      const t = (now - start) / 1000;
+      // Soluzione esatta della molla criticamente smorzata.
+      const x = (x0 + (v0 + w * x0) * t) * Math.exp(-w * t);
+      if (Math.abs(x) < 0.5 && t > 0.1) {
+        el.scrollLeft = target;
         anim.current = 0;
         el.classList.remove("carousel__track--animating", "carousel__track--dragging");
+        return;
       }
+      el.scrollLeft = target + x;
+      anim.current = requestAnimationFrame(step);
     };
     anim.current = requestAnimationFrame(step);
   }
