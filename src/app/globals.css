@@ -230,9 +230,9 @@ ul { list-style: none; }
 /* ---------- La Familia ---------- */
 .familia { max-width: 1580px; margin: 0 auto; padding: 90px var(--gutter) 120px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
 .familia__list { padding-left: 8%; }
-.familia__head { display: grid; grid-template-columns: auto auto; justify-content: start; align-items: center; column-gap: 8px; margin-bottom: 40px; }
+.familia__head { margin-bottom: 40px; }
 .familia__head h2 { font-size: clamp(72px, 7vw, 120px); line-height: 1; }
-.familia__head p { grid-column: 1 / -1; font-size: 14px; text-transform: uppercase; margin-top: -10px; }
+.familia__head p { font-size: 14px; text-transform: uppercase; margin-top: -10px; }
 .familia__list ul { display: grid; gap: 4px; }
 .familia__list button {
   position: relative; padding: 6px 30px; margin-left: 64px; border: 2px solid transparent; border-radius: 26px;

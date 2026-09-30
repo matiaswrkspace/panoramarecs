@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { familia } from "@/content";
-import Mark from "./Mark";
 import Visual from "./Visual";
 
 export default function Familia() {
@@ -13,7 +12,6 @@ export default function Familia() {
       <div className="familia__list">
         <div className="familia__head">
           <h2 className="script">{familia.title}</h2>
-          <Mark size={70} />
           <p>{familia.subtitle}</p>
         </div>
         <ul>
