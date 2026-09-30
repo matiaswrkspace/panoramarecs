@@ -57,7 +57,7 @@ export default function Home({ lang }: { lang: Lang }) {
 
         <section className="stay" id="stay">
           <h2 className="section-title">{t.stay}</h2>
-          <Carousel className="carousel--flush" labels={{ prev: t.prev, next: t.next, goTo: t.goTo }}>
+          <Carousel dots className="carousel--flush" labels={{ prev: t.prev, next: t.next, goTo: t.goTo }}>
             {stayAndPlay.map((s, i) => (
               <article className="stay__card" key={s.title}>
                 <Visual item={s} className="stay__img" />

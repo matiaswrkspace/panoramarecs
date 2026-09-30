@@ -126,7 +126,7 @@ ul { list-style: none; }
 @keyframes sweep { from { transform: rotate(var(--a)); } to { transform: rotate(var(--b)); } }
 
 .hero__content { position: relative; padding: 120px var(--gutter) 60px; width: 100%; }
-.hero__logo { font-size: clamp(96px, 19vw, 340px); line-height: 1.1; padding: 0 0.1em; }
+.hero__logo { font-size: clamp(64px, 19vw, 340px); line-height: 1.1; padding: 0 0.1em; }
 .hero__tagline { margin-top: clamp(40px, 10vh, 120px); font-size: clamp(18px, 2vw, 30px); text-transform: uppercase; letter-spacing: 0.35em; color: var(--muted); }
 
 /* ---------- Cookie ---------- */
