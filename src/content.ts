@@ -41,10 +41,10 @@ export type Event = Placeholder & {
 };
 
 export const events: Event[] = [
-  { date: "Wed, 30 Sept 2026 | 23:00 - 06:00", title: "Opening Night", lineup: "Artista A, Artista B, Artista C", ticketsFrom: 30, vipFrom: 175, tint: ["#e9e9ef", "#9aa0b4"] },
-  { date: "Thu, 01 Oct 2026 | 23:00 - 06:00", title: "Disco Fever | Closing Party", lineup: "Artista D, Artista E, Artista F, Artista G", ticketsFrom: 30, vipFrom: 150, tint: ["#7b3fe4", "#1c0b4a"] },
-  { date: "Fri, 02 Oct 2026 | 23:00 - 06:00", title: "Deep Sessions", lineup: "Artista H, Artista I, Artista L", ticketsFrom: 85, vipFrom: 450, tint: ["#3b4a78", "#0b0f24"] },
-  { date: "Sat, 03 Oct 2026 | 23:00 - 06:00", title: "Season Closing Party", lineup: "Artista M, Artista N, Artista O", ticketsFrom: 30, vipFrom: 220, tint: ["#e0592a", "#5a1206"] },
+  { date: "Wed, 30 Sept 2026 | 23:00 - 06:00", title: "Opening Night", lineup: "Artista A, Artista B, Artista C", ticketsFrom: 30, vipFrom: 175, tint: ["#d9f5e6", "#6fae8c"] },
+  { date: "Thu, 01 Oct 2026 | 23:00 - 06:00", title: "Disco Fever | Closing Party", lineup: "Artista D, Artista E, Artista F, Artista G", ticketsFrom: 30, vipFrom: 150, tint: ["#16c47a", "#04301c"] },
+  { date: "Fri, 02 Oct 2026 | 23:00 - 06:00", title: "Deep Sessions", lineup: "Artista H, Artista I, Artista L", ticketsFrom: 85, vipFrom: 450, tint: ["#1e5a50", "#03110e"] },
+  { date: "Sat, 03 Oct 2026 | 23:00 - 06:00", title: "Season Closing Party", lineup: "Artista M, Artista N, Artista O", ticketsFrom: 30, vipFrom: 220, tint: ["#8ee04a", "#1a3a06"] },
   { date: "Sun, 04 Oct 2026 | 23:00 - 06:00", title: "Sunday Social", lineup: "Artista P, Artista Q", ticketsFrom: 25, vipFrom: 150, tint: ["#1f8a70", "#062a22"] },
   { date: "Thu, 08 Oct 2026 | 23:00 - 06:00", title: "House Anthems", lineup: "Artista R, Artista S", ticketsFrom: 30, vipFrom: 175, tint: ["#d63a7a", "#3a0822"] },
   { date: "Fri, 09 Oct 2026 | 23:00 - 06:00", title: "Techno Rituals", lineup: "Artista T, Artista U, Artista V", ticketsFrom: 40, vipFrom: 300, tint: ["#555", "#0a0a0a"] },
@@ -52,8 +52,8 @@ export const events: Event[] = [
 ];
 
 export const experiences: (Placeholder & { title: string; href: string })[] = [
-  { title: "Vip", href: "#", tint: ["#ff7a18", "#3a0d00"] },
-  { title: "Dine", href: "#", tint: ["#b9383c", "#2a0708"] },
+  { title: "Vip", href: "#", tint: ["#39ff8f", "#03331a"] },
+  { title: "Dine", href: "#", tint: ["#0f8a4f", "#021a0e"] },
 ];
 
 export const stayAndPlay: (Placeholder & { title: string })[] = [

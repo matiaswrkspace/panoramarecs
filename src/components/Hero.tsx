@@ -10,6 +10,9 @@ export default function Hero() {
         <div className="beam beam--2" />
         <div className="beam beam--3" />
         <div className="beam beam--4" />
+        <div className="laser" />
+        <div className="laser laser--2" />
+        <div className="laser laser--3" />
       </div>
       <div className="hero__content">
         <p className="hero__kicker script">{brand.heroKicker}</p>
