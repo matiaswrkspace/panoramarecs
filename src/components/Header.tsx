@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <>
-      <header className={`header ${scrolled ? "header--scrolled" : ""}`}>
+      <header className={`header ${scrolled ? "header--scrolled" : ""} ${open ? "header--menu" : ""}`}>
         <a href="#top" className="header__logo" aria-label={brand.name}>
           <Mark />
         </a>
