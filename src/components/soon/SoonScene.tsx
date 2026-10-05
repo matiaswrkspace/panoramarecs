@@ -16,10 +16,11 @@ const BPM = 124;
 // Riflesso del sole: bande luminose sempre più strette e deboli verso il basso,
 // spezzate da un'ondulazione animata. Posizioni fisse (niente casuale al render).
 const HORIZON = 640;
-// Misura intermedia: più largo del riflesso originale, più stretto della versione larga.
-const reflection = Array.from({ length: 41 }, (_, i) => {
+// Misura intermedia in larghezza; in lunghezza sfuma a circa due terzi dell'acqua,
+// così sotto i contatti resta acqua scura.
+const reflection = Array.from({ length: 29 }, (_, i) => {
   const y = 646 + i * 6;
-  const k = 1 - (y - 646) / 305;
+  const k = 1 - (y - 646) / 205;
   const jitter = Math.sin(i * 12.9898) * 0.5 + 0.5; // pseudo-casuale ma stabile
   const w = Math.max(21, 385 * k ** 0.92 * (0.58 + jitter * 0.55));
   return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.55 * k + 0.05).toFixed(2) };
