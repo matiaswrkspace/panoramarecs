@@ -1,0 +1,15 @@
+/* Video a tutto schermo senza tagli: i bordi del video sono quasi neri,
+   quindi su schermi di proporzioni diverse le bande si fondono con lo sfondo. */
+.soon-video { position: fixed; inset: 0; background: #010302; display: grid; place-items: center; overflow: hidden; }
+.soon-video__player { width: 100%; height: 100%; object-fit: contain; background: #010302; }
+
+/* Titolo per motori di ricerca e lettori di schermo; email cliccabile ma invisibile
+   finché non riceve il focus (nel video l'email è già scritta). */
+.soon-video__sr, .soon-video__mail:not(:focus-visible) {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+.soon-video__mail:focus-visible {
+  position: absolute; bottom: 16px; left: 50%; translate: -50% 0; padding: 8px 16px; border-radius: 999px;
+  background: #0f8a4f; color: #fff; text-decoration: none; font-size: 14px; letter-spacing: 0.1em;
+}
+
