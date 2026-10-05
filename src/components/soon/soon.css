@@ -5,15 +5,28 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
   position: fixed; inset: 0; overflow: hidden;
+  /* unità di misura comune a tutti i livelli: la scala del viewBox 1600×900 "a riempire",
+     calcolata sulle dimensioni reali della pagina (anche con le barre del telefono) */
+  container-type: size;
+  --s: max(100cqw / 1600, 100cqh / 900);
+  --wrap: 0.62; /* scala della luna attorno all'orizzonte (0.58 in verticale) */
   background: #010302; color: #fff;
   display: grid; place-items: center;
 }
 
 /* ---------- Cielo / sole / acqua ---------- */
-.soon-sky { position: absolute; inset: 0; width: 100%; height: 100%; filter: blur(0.4px); }
+.soon-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-.soon-sun__halo { transform-box: fill-box; transform-origin: center; animation: soon-beat var(--beat) ease-out 3s infinite; }
-@keyframes soon-beat { 0% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.72; transform: scale(1); } }
+/* Livelli che devono stare solo sopra l'orizzonte: ritaglio CSS fermo sul contenitore
+   (l'orizzonte sta a y=640 del viewBox → 50% + 190 unità dal centro). */
+.soon-above { position: absolute; inset: 0; pointer-events: none; clip-path: inset(0 0 calc(50% - 190 * var(--s)) 0); }
+
+/* Centro della luna sullo schermo: serve come perno per pulsare e ruotare */
+.soon-halo, .soon-label { transform-origin: 50% calc(50% + (190 - 40 * var(--wrap)) * var(--s)); will-change: transform; }
+
+/* l'alone pulsa sul battere (124 BPM) */
+.soon-halo { animation: soon-beat var(--beat) ease-out 3s infinite; }
+@keyframes soon-beat { 0% { opacity: 1; transform: scale(1.04); } 100% { opacity: 0.7; transform: scale(1); } }
 
 .soon-horizon {
   stroke: #c8ffe0; stroke-width: 1.5; opacity: 0.8;
@@ -34,16 +47,24 @@
   100% { opacity: 1; transform: scale(1); filter: none; }
 }
 
-/* ---------- Disco in vinile ---------- */
-.soon-vinyl-rim { filter: drop-shadow(0 0 6px rgba(79, 232, 160, 0.6)); }
-/* l'etichetta gira piano (un giro ogni 12 s); solchi e riflessi restano fermi come la luce */
-.soon-vinyl-label { transform-box: view-box; transform-origin: 800px 600px; animation: soon-spin 12s linear infinite; }
+/* ---------- Luna-vinile ---------- */
+.soon-vinyl-rim { filter: drop-shadow(0 0 8px rgba(214, 248, 228, 0.55)); }
+/* la scritta dell'etichetta gira piano (un giro ogni 12 s) */
+.soon-label { animation: soon-spin 12s linear infinite; }
 @keyframes soon-spin { to { transform: rotate(360deg); } }
-.soon-vinyl-text { font-family: var(--font-sans), sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 2.6px; fill: #08251a; }
+.soon-vinyl-text { font-family: var(--font-sans), sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 2.6px; fill: #4d6b5a; }
 
-/* ---------- Acqua: onde e riflesso del sole ---------- */
-.soon-water line { opacity: 0.8; transform-box: fill-box; transform-origin: center; animation: soon-ripple 8s ease-in-out infinite; }
-@keyframes soon-ripple { 50% { transform: scaleX(0.9) translateX(4px); opacity: 0.7; } }
+/* ---------- Acqua: onde e riflesso della luna ----------
+   Due riflessi fermi con increspature diverse si dissolvono l'uno nell'altro,
+   e l'insieme ondeggia piano: movimento d'acqua senza ridisegnare nulla. */
+.soon-reflect-wrap {
+  position: absolute; inset: 0; transform-origin: 50% calc(50% + 190 * var(--s)); will-change: transform;
+  animation: soon-drift 11s ease-in-out infinite alternate;
+}
+@keyframes soon-drift { from { transform: scaleX(1) translateX(0); } to { transform: scaleX(1.06) translateX(0.3%); } }
+.soon-reflect { will-change: opacity; animation: soon-xfade 7s ease-in-out infinite alternate; }
+.soon-reflect--a { animation-direction: alternate-reverse; }
+@keyframes soon-xfade { from { opacity: 0.15; } to { opacity: 1; } }
 
 .soon-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
@@ -129,7 +150,7 @@
 }
 /* Viraggio da videocassetta: neri sollevati e caldi, un velo magenta nelle ombre */
 .soon-vhs {
-  position: absolute; inset: 0; z-index: 4; pointer-events: none; mix-blend-mode: screen;
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
   background:
     linear-gradient(180deg, rgba(255, 214, 160, 0.035), rgba(170, 120, 190, 0.03) 70%, rgba(255, 190, 150, 0.04)),
     radial-gradient(120% 90% at 50% 40%, rgba(255, 230, 190, 0.025), transparent 70%);
@@ -160,6 +181,7 @@
 
 /* ---------- Schermi verticali (telefoni, iPad verticale) ---------- */
 @media (max-aspect-ratio: 1/1) {
+  .soon { --wrap: 0.58; }
   .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.58); }
   .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.6); }
   .soon-content { top: 13vh; }

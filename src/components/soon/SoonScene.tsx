@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { brand } from "@/content";
 import Logo from "../Logo";
 import Particles from "./Particles";
@@ -9,144 +10,200 @@ import "./soon.css";
 // Apertura: la scena, già composta, emerge dal nero in un'unica ripresa (0.2–3.6 s:
 // carrellata in avanti, messa a fuoco, luce che sale) · 2.6 si accende l'insegna ·
 // 3.6 arriva SOON · 4.8 contatti.
-// Poi resta viva a 124 BPM: il riflesso ondeggia piano sull'acqua, il sole pulsa sul battere,
-// la spia rossa "Recording" lampeggia. Nessun tremolio: solo colori e righe da nastro VHS.
+//
+// PRESTAZIONI — la scena è divisa in livelli, come in un programma di grafica:
+// tutto ciò che è pesante da disegnare (trame della luna, acqua deformata) sta in
+// livelli FERMI, disegnati una volta sola. Le parti vive (alone che pulsa, etichetta
+// che gira, riflesso che ondeggia) sono livelli separati che si muovono solo con
+// trasformazioni e trasparenza: le gestisce la scheda grafica senza ridisegnare nulla.
+// Niente ritagli SVG annidati né filtri CSS sull'SVG (lenti e fragili su Safari).
 const BPM = 124;
 
-// Riflesso del sole: bande luminose sempre più strette e deboli verso il basso,
-// spezzate da un'ondulazione animata. Posizioni fisse (niente casuale al render).
+// Tutti i livelli condividono lo stesso spazio: viewBox 1600×900 adattato "a riempire".
 const HORIZON = 640;
-// Misura intermedia in larghezza; in lunghezza sfuma a circa due terzi dell'acqua,
-// così sotto i contatti resta acqua scura.
+const MOON = { x: 800, y: 600, r: 240 };
+
+function Layer({ className, children }: { className: string; children: ReactNode }) {
+  return (
+    <svg className={`soon-layer ${className}`} viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+// Riflesso della luna: bande luminose sempre più strette e deboli verso il basso.
+// Misura intermedia in larghezza; sfuma a circa due terzi dell'acqua. Posizioni fisse.
 const reflection = Array.from({ length: 29 }, (_, i) => {
   const y = 646 + i * 6;
   const k = 1 - (y - 646) / 205;
   const jitter = Math.sin(i * 12.9898) * 0.5 + 0.5; // pseudo-casuale ma stabile
   const w = Math.max(21, 385 * k ** 0.92 * (0.58 + jitter * 0.55));
-  return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.32 * k + 0.04).toFixed(2) };
+  return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.42 * k + 0.04).toFixed(2) };
 });
 const ripples = [640, 656, 676, 700, 728, 760, 796, 836];
+
+// Crateri lunari (posizioni fisse, nella metà visibile sopra l'orizzonte).
+const craters = [
+  { x: 702, y: 452, r: 16 }, { x: 893, y: 431, r: 11 }, { x: 958, y: 528, r: 20 },
+  { x: 640, y: 560, r: 13 }, { x: 760, y: 392, r: 8 }, { x: 905, y: 590, r: 9 }, { x: 676, y: 505, r: 6 },
+];
 
 // Solchi del vinile, dall'etichetta al bordo.
 const grooves = Array.from({ length: 52 }, (_, i) => 88 + i * 2.9);
 
-export default function SoonScene() {
+// Riflesso disegnato due volte con increspature diverse: le due versioni si
+// dissolvono lentamente l'una nell'altra e l'acqua sembra muoversi.
+function Reflection({ id, seed, freq }: { id: string; seed: number; freq: string }) {
+  return (
+    <Layer className={`soon-reflect soon-reflect--${id}`}>
+      <defs>
+        <filter id={`soon-ripple-${id}`} x="-30%" y="-10%" width="160%" height="130%">
+          <feTurbulence type="fractalNoise" baseFrequency={freq} numOctaves="2" seed={seed} />
+          <feDisplacementMap in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G" />
+          <feGaussianBlur stdDeviation="1.1" />
+        </filter>
+      </defs>
+      <g className="soon-water">
+        <g filter={`url(#soon-ripple-${id})`}>
+          {reflection.map((b) => (
+            <rect key={b.y} x={b.x} y={b.y} width={b.w} height={b.h} fill="#e3f6ea" opacity={b.o} />
+          ))}
+        </g>
+      </g>
+    </Layer>
+  );
+}
 
+export default function SoonScene() {
   return (
     <main className="soon" style={{ ["--beat" as string]: `${60 / BPM}s` }}>
       <div className="soon-stage">
-        {/* Cielo, sole al tramonto, orizzonte e acqua */}
-        <svg className="soon-sky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        {/* ---------- Livello fermo: cielo, luna-vinile, orizzonte, acqua ---------- */}
+        <Layer className="soon-sky">
           <defs>
-            <radialGradient id="soon-sky" cx="50%" cy="62%" r="75%">
+            {/* stessa sfumatura per cielo e acqua (coordinate assolute): l'acqua può
+                coprire la parte bassa della luna senza bisogno di ritagli */}
+            <radialGradient id="soon-sky" gradientUnits="userSpaceOnUse" cx="800" cy="558" r="1200" gradientTransform="translate(800 558) scale(1 0.5625) translate(-800 -558)">
               <stop offset="0" stopColor="#15402c" />
               <stop offset=".45" stopColor="#08190f" />
               <stop offset="1" stopColor="#050a07" />
             </radialGradient>
-            {/* Disco in vinile */}
-            <radialGradient id="soon-vinyl" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stopColor="#0d1f16" />
-              <stop offset=".8" stopColor="#07130d" />
-              <stop offset="1" stopColor="#040b07" />
+            {/* superficie lunare chiara, bordo un po' più scuro */}
+            <radialGradient id="soon-moon" cx="44%" cy="40%" r="62%">
+              <stop offset="0" stopColor="#e4ede0" />
+              <stop offset=".55" stopColor="#c8d9cb" />
+              <stop offset=".85" stopColor="#a6bfae" />
+              <stop offset="1" stopColor="#84a190" />
             </radialGradient>
-            {/* riflessi di luce sui solchi: fermi, come una lampada sopra il piatto */}
-            <linearGradient id="soon-sheen" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#c8ffe0" stopOpacity="0" />
-              <stop offset=".5" stopColor="#c8ffe0" stopOpacity=".16" />
-              <stop offset="1" stopColor="#c8ffe0" stopOpacity="0" />
-            </linearGradient>
-            <radialGradient id="soon-label">
-              <stop offset="0" stopColor="#5fe8a8" />
-              <stop offset="1" stopColor="#1f8f5c" />
-            </radialGradient>
-            <path id="soon-label-path" d="M800 600 m-56 0 a56 56 0 1 1 112 0 a56 56 0 1 1 -112 0" />
-            {/* alone tenue dietro il disco */}
-            <radialGradient id="soon-halo">
-              <stop offset="0" stopColor="#4fe8a0" stopOpacity=".2" />
-              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
-            </radialGradient>
-            {/* foschia dove il disco tocca l'acqua */}
-            <radialGradient id="soon-haze">
-              <stop offset="0" stopColor="#c8ffe0" stopOpacity=".22" />
-              <stop offset=".4" stopColor="#9ef0c6" stopOpacity=".08" />
-              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
-            </radialGradient>
-            <clipPath id="soon-above">
-              <rect x="0" y="0" width="1600" height={HORIZON} />
-            </clipPath>
-            <clipPath id="soon-disc">
-              <circle cx="800" cy="600" r="240" />
-            </clipPath>
-            {/* Acqua: il riflesso tremola deformato da un'ondulazione animata */}
-            <filter id="soon-ripple" x="-30%" y="-10%" width="160%" height="130%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="2" seed="7">
-                <animate attributeName="baseFrequency" dur="20s" values="0.006 0.09;0.0075 0.105;0.006 0.09" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1" />
-              </feTurbulence>
-              <feDisplacementMap in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G" />
-              <feGaussianBlur stdDeviation="1.1" />
+            {/* trame lunari ("mari" e grana) confinate nel disco dal filtro stesso */}
+            <filter id="soon-moon-surface" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.0075" numOctaves="3" seed="23" result="m" />
+              <feColorMatrix in="m" values="0 0 0 0 0.33  0 0 0 0 0.42  0 0 0 0 0.38  0 0 0 -3.6 2.15" result="maria" />
+              <feGaussianBlur in="maria" stdDeviation="2" result="mariaSoft" />
+              <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="5" result="g" />
+              <feColorMatrix in="g" values="0 0 0 0 0.3  0 0 0 0 0.38  0 0 0 0 0.34  0 0 0 -1.6 1.02" result="grain" />
+              <feComponentTransfer in="mariaSoft" result="mariaA"><feFuncA type="linear" slope="0.85" /></feComponentTransfer>
+              <feComponentTransfer in="grain" result="grainA"><feFuncA type="linear" slope="0.35" /></feComponentTransfer>
+              <feMerge result="tex"><feMergeNode in="mariaA" /><feMergeNode in="grainA" /></feMerge>
+              <feComposite in="tex" in2="SourceAlpha" operator="in" result="texIn" />
+              <feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="texIn" /></feMerge>
             </filter>
+            <radialGradient id="soon-crater" cx="45%" cy="40%" r="60%">
+              <stop offset="0" stopColor="#7f998a" stopOpacity=".55" />
+              <stop offset=".75" stopColor="#8fa999" stopOpacity=".3" />
+              <stop offset="1" stopColor="#ffffff" stopOpacity=".35" />
+            </radialGradient>
+            <radialGradient id="soon-label">
+              <stop offset="0" stopColor="#e9f1e6" />
+              <stop offset="1" stopColor="#c6d8cb" />
+            </radialGradient>
+            {/* chiaro di luna stretto attorno al disco (fermo) */}
+            <radialGradient id="soon-glow" gradientUnits="userSpaceOnUse" cx={MOON.x} cy={MOON.y} r="480">
+              <stop offset=".5" stopColor="#e9fbef" stopOpacity=".24" />
+              <stop offset=".6" stopColor="#bdf1d4" stopOpacity=".12" />
+              <stop offset="1" stopColor="#8fe3b8" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="soon-haze" gradientUnits="userSpaceOnUse" cx="800" cy={HORIZON} r="520" gradientTransform={`translate(800 ${HORIZON}) scale(1 0.09) translate(-800 -${HORIZON})`}>
+              <stop offset="0" stopColor="#e9fbef" stopOpacity=".2" />
+              <stop offset=".4" stopColor="#bdf1d4" stopOpacity=".07" />
+              <stop offset="1" stopColor="#8fe3b8" stopOpacity="0" />
+            </radialGradient>
             <linearGradient id="soon-water" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#4fe8a0" stopOpacity=".55" />
-              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
+              <stop offset="0" stopColor="#cdeedb" stopOpacity=".5" />
+              <stop offset="1" stopColor="#cdeedb" stopOpacity="0" />
             </linearGradient>
           </defs>
 
           <rect width="1600" height="900" fill="url(#soon-sky)" />
 
-          {/* il disco tramonta sull'orizzonte; su telefono si rimpicciolisce (vedi CSS) */}
+          {/* la luna-vinile tramonta sull'orizzonte; su telefono si rimpicciolisce (vedi CSS) */}
           <g className="soon-sun-wrap">
-            <g className="soon-sun">
-              <circle cx="800" cy="600" r="460" fill="url(#soon-halo)" className="soon-sun__halo" />
-              <g clipPath="url(#soon-above)">
-                <circle cx="800" cy="600" r="240" fill="url(#soon-vinyl)" />
-                {/* solchi */}
-                {grooves.map((r, i) => (
-                  <circle key={r} cx="800" cy="600" r={r} fill="none" stroke="#9ef0c6" strokeOpacity={i % 3 === 0 ? 0.13 : 0.06} strokeWidth="1" />
-                ))}
-                {/* riflessi di luce sui solchi */}
-                <path d="M800 600 L963 424 A240 240 0 0 1 1010 486 Z" fill="url(#soon-sheen)" />
-                <path d="M800 600 L637 776 A240 240 0 0 1 590 714 Z" fill="url(#soon-sheen)" />
-                <path d="M800 600 L637 424 A240 240 0 0 0 590 486 Z" fill="url(#soon-sheen)" opacity=".5" />
-                {/* bordo luminoso che stacca il disco dal cielo */}
-                <circle cx="800" cy="600" r="239" fill="none" stroke="#7ee9b4" strokeOpacity=".55" strokeWidth="2" className="soon-vinyl-rim" />
-                {/* etichetta che gira lentamente */}
-                <g className="soon-vinyl-label">
-                  <circle cx="800" cy="600" r="80" fill="url(#soon-label)" />
-                  <circle cx="800" cy="600" r="80" fill="none" stroke="#0a2a1a" strokeOpacity=".5" strokeWidth="2" />
-                  <text className="soon-vinyl-text">
-                    <textPath href="#soon-label-path" startOffset="0">PANORAMA RECORDS · PANORAMA RECORDS ·</textPath>
-                  </text>
-                  <circle cx="800" cy="600" r="7" fill="#06110b" />
-                </g>
-              </g>
-            </g>
+            <rect x="320" y="120" width="960" height="960" fill="url(#soon-glow)" />
+            <circle cx={MOON.x} cy={MOON.y} r={MOON.r} fill="url(#soon-moon)" filter="url(#soon-moon-surface)" />
+            {craters.map((c) => (
+              <circle key={`${c.x}-${c.y}`} cx={c.x} cy={c.y} r={c.r} fill="url(#soon-crater)" />
+            ))}
+            {/* solchi del vinile incisi nella superficie */}
+            {grooves.map((r, i) => (
+              <circle key={r} cx={MOON.x} cy={MOON.y} r={r} fill="none" stroke="#3f5a4b" strokeOpacity={i % 4 === 0 ? 0.16 : 0.07} strokeWidth="0.9" />
+            ))}
+            {/* etichetta in rilievo (la scritta che gira è su un livello a parte) */}
+            <circle cx={MOON.x} cy={MOON.y} r="80" fill="url(#soon-label)" />
+            <circle cx={MOON.x} cy={MOON.y} r="80" fill="none" stroke="#5d7a69" strokeOpacity=".45" strokeWidth="1.5" />
+            <circle cx={MOON.x} cy={MOON.y} r="74" fill="none" stroke="#ffffff" strokeOpacity=".35" strokeWidth="1" />
+            <circle cx={MOON.x} cy={MOON.y} r="6" fill="#0b1a12" />
+            {/* bordo illuminato */}
+            <circle cx={MOON.x} cy={MOON.y} r="239.5" fill="none" stroke="#f3f8ef" strokeOpacity=".55" strokeWidth="1.5" className="soon-vinyl-rim" />
           </g>
 
-          <line x1="0" y1={HORIZON} x2="1600" y2={HORIZON} className="soon-horizon" />
-          <g className="soon-sun-wrap">
-            <ellipse cx="800" cy={HORIZON} rx="520" ry="46" fill="url(#soon-haze)" />
-          </g>
-
+          {/* acqua: copre la parte bassa della luna, con la stessa sfumatura del cielo */}
+          <rect x="0" y={HORIZON} width="1600" height={900 - HORIZON} fill="url(#soon-sky)" />
           <g className="soon-water">
             {ripples.map((y, i) => (
-              <line
-                key={y}
-                x1={800 - 220 + i * 14}
-                x2={800 + 220 - i * 14}
-                y1={y}
-                y2={y}
-                stroke="url(#soon-water)"
-                strokeWidth={3 - i * 0.25}
-                style={{ animationDelay: `${i * -0.35}s` }}
-              />
+              <line key={y} x1={800 - 220 + i * 14} x2={800 + 220 - i * 14} y1={y} y2={y} stroke="url(#soon-water)" strokeWidth={3 - i * 0.25} opacity="0.8" />
             ))}
-            <g filter="url(#soon-ripple)" className="soon-reflection">
-              {reflection.map((b) => (
-                <rect key={b.y} x={b.x} y={b.y} width={b.w} height={b.h} fill="#7ee9b4" opacity={b.o} />
-              ))}
-            </g>
           </g>
-        </svg>
+          <line x1="0" y1={HORIZON} x2="1600" y2={HORIZON} className="soon-horizon" />
+          <g className="soon-sun-wrap">
+            <rect x="280" y={HORIZON - 47} width="1040" height="94" fill="url(#soon-haze)" />
+          </g>
+        </Layer>
+
+        {/* ---------- Livelli vivi (si muovono solo con trasformazioni/trasparenza) ---------- */}
+        <div className="soon-reflect-wrap">
+          <Reflection id="a" seed={7} freq="0.006 0.09" />
+          <Reflection id="b" seed={19} freq="0.0068 0.1" />
+        </div>
+
+        {/* alone che pulsa sul battere: anello attorno alla luna, solo sopra l'orizzonte */}
+        <div className="soon-above">
+          <Layer className="soon-halo">
+            <defs>
+              <radialGradient id="soon-halo" gradientUnits="userSpaceOnUse" cx={MOON.x} cy={MOON.y} r="460">
+                <stop offset=".5" stopColor="#d8f5e4" stopOpacity="0" />
+                <stop offset=".54" stopColor="#d8f5e4" stopOpacity=".12" />
+                <stop offset="1" stopColor="#8fe3b8" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <g className="soon-sun-wrap">
+              <rect x="340" y="140" width="920" height="920" fill="url(#soon-halo)" />
+            </g>
+          </Layer>
+        </div>
+
+        {/* scritta dell'etichetta che gira lentamente, solo sopra l'orizzonte */}
+        <div className="soon-above">
+          <Layer className="soon-label">
+            <defs>
+              <path id="soon-label-path" d={`M${MOON.x} ${MOON.y} m-56 0 a56 56 0 1 1 112 0 a56 56 0 1 1 -112 0`} />
+            </defs>
+            <g className="soon-sun-wrap">
+              <text className="soon-vinyl-text">
+                <textPath href="#soon-label-path" startOffset="0">PANORAMA RECORDS · PANORAMA RECORDS ·</textPath>
+              </text>
+            </g>
+          </Layer>
+        </div>
 
         <Particles />
 
