@@ -49,8 +49,8 @@ export default function Particles() {
         const twinkle = 0.6 + 0.4 * Math.sin(t / 600 + d.drift * 3);
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(184, 255, 217, ${d.a * twinkle})`;
-        ctx.shadowColor = "rgba(57, 255, 143, 0.9)";
+        ctx.fillStyle = `rgba(232, 240, 214, ${d.a * twinkle * 0.8})`;
+        ctx.shadowColor = "rgba(143, 220, 174, 0.7)";
         ctx.shadowBlur = d.r * 6;
         ctx.fill();
       }
