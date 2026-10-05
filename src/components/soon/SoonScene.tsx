@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { brand } from "@/content";
 import Logo from "../Logo";
+import MoonReflection from "./MoonReflection";
 import Particles from "./Particles";
 import "./soon.css";
 
@@ -31,15 +32,6 @@ function Layer({ className, children }: { className: string; children: ReactNode
   );
 }
 
-// Riflesso della luna: bande luminose sempre più strette e deboli verso il basso.
-// Misura intermedia in larghezza; sfuma a circa due terzi dell'acqua. Posizioni fisse.
-const reflection = Array.from({ length: 29 }, (_, i) => {
-  const y = 646 + i * 6;
-  const k = 1 - (y - 646) / 205;
-  const jitter = Math.sin(i * 12.9898) * 0.5 + 0.5; // pseudo-casuale ma stabile
-  const w = Math.max(21, 385 * k ** 0.92 * (0.58 + jitter * 0.55));
-  return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.42 * k + 0.04).toFixed(2) };
-});
 const ripples = [640, 656, 676, 700, 728, 760, 796, 836];
 
 // Crateri lunari (posizioni fisse, nella metà visibile sopra l'orizzonte).
@@ -50,29 +42,6 @@ const craters = [
 
 // Solchi del vinile, dall'etichetta al bordo.
 const grooves = Array.from({ length: 52 }, (_, i) => 88 + i * 2.9);
-
-// Riflesso disegnato due volte con increspature diverse: le due versioni si
-// dissolvono lentamente l'una nell'altra e l'acqua sembra muoversi.
-function Reflection({ id, seed, freq }: { id: string; seed: number; freq: string }) {
-  return (
-    <Layer className={`soon-reflect soon-reflect--${id}`}>
-      <defs>
-        <filter id={`soon-ripple-${id}`} x="-30%" y="-10%" width="160%" height="130%">
-          <feTurbulence type="fractalNoise" baseFrequency={freq} numOctaves="2" seed={seed} />
-          <feDisplacementMap in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G" />
-          <feGaussianBlur stdDeviation="1.1" />
-        </filter>
-      </defs>
-      <g className="soon-water">
-        <g filter={`url(#soon-ripple-${id})`}>
-          {reflection.map((b) => (
-            <rect key={b.y} x={b.x} y={b.y} width={b.w} height={b.h} fill="#e3f6ea" opacity={b.o} />
-          ))}
-        </g>
-      </g>
-    </Layer>
-  );
-}
 
 export default function SoonScene() {
   return (
@@ -170,10 +139,8 @@ export default function SoonScene() {
         </Layer>
 
         {/* ---------- Livelli vivi (si muovono solo con trasformazioni/trasparenza) ---------- */}
-        <div className="soon-reflect-wrap">
-          <Reflection id="a" seed={7} freq="0.006 0.09" />
-          <Reflection id="b" seed={19} freq="0.0068 0.1" />
-        </div>
+        {/* riflesso della luna che si muove sull'acqua (canvas leggero, solo sotto la luna) */}
+        <MoonReflection />
 
         {/* alone che pulsa sul battere: anello attorno alla luna, solo sopra l'orizzonte */}
         <div className="soon-above">
