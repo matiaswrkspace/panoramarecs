@@ -23,12 +23,14 @@ const reflection = Array.from({ length: 29 }, (_, i) => {
   const k = 1 - (y - 646) / 205;
   const jitter = Math.sin(i * 12.9898) * 0.5 + 0.5; // pseudo-casuale ma stabile
   const w = Math.max(21, 385 * k ** 0.92 * (0.58 + jitter * 0.55));
-  return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.55 * k + 0.05).toFixed(2) };
+  return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.32 * k + 0.04).toFixed(2) };
 });
 const ripples = [640, 656, 676, 700, 728, 760, 796, 836];
 
+// Solchi del vinile, dall'etichetta al bordo.
+const grooves = Array.from({ length: 52 }, (_, i) => 88 + i * 2.9);
+
 export default function SoonScene() {
-  const stripes = [520, 548, 572, 593, 611, 626];
 
   return (
     <main className="soon" style={{ ["--beat" as string]: `${60 / BPM}s` }}>
@@ -41,34 +43,32 @@ export default function SoonScene() {
               <stop offset=".45" stopColor="#08190f" />
               <stop offset="1" stopColor="#050a07" />
             </radialGradient>
-            <radialGradient id="soon-sun" cx="50%" cy="42%" r="58%">
-              <stop offset="0" stopColor="#fbfff4" />
-              <stop offset=".35" stopColor="#d6fbe4" />
-              <stop offset=".72" stopColor="#7ee9b4" />
-              <stop offset="1" stopColor="#2fae74" />
+            {/* Disco in vinile */}
+            <radialGradient id="soon-vinyl" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stopColor="#0d1f16" />
+              <stop offset=".8" stopColor="#07130d" />
+              <stop offset="1" stopColor="#040b07" />
             </radialGradient>
-            {/* bagliore stretto attorno al disco */}
-            <radialGradient id="soon-corona">
-              <stop offset=".5" stopColor="#d6fbe4" stopOpacity=".55" />
-              <stop offset=".62" stopColor="#7ee9b4" stopOpacity=".22" />
-              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
+            {/* riflessi di luce sui solchi: fermi, come una lampada sopra il piatto */}
+            <linearGradient id="soon-sheen" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#c8ffe0" stopOpacity="0" />
+              <stop offset=".5" stopColor="#c8ffe0" stopOpacity=".16" />
+              <stop offset="1" stopColor="#c8ffe0" stopOpacity="0" />
+            </linearGradient>
+            <radialGradient id="soon-label">
+              <stop offset="0" stopColor="#5fe8a8" />
+              <stop offset="1" stopColor="#1f8f5c" />
             </radialGradient>
-            {/* superficie: macchie leggere, come visto attraverso l'atmosfera */}
-            <filter id="soon-surface" x="0" y="0" width="100%" height="100%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="4" seed="11" />
-              <feColorMatrix values="0 0 0 0 0.05  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 -1.4 1.05" />
-            </filter>
-            {/* foschia dove il sole tocca l'acqua */}
-            <radialGradient id="soon-haze">
-              <stop offset="0" stopColor="#e6fff1" stopOpacity=".42" />
-              <stop offset=".4" stopColor="#9ef0c6" stopOpacity=".16" />
-              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
-            </radialGradient>
-            <filter id="soon-blur-stripes" x="-5%" y="-50%" width="110%" height="200%">
-              <feGaussianBlur stdDeviation="0 1.2" />
-            </filter>
+            <path id="soon-label-path" d="M800 600 m-56 0 a56 56 0 1 1 112 0 a56 56 0 1 1 -112 0" />
+            {/* alone tenue dietro il disco */}
             <radialGradient id="soon-halo">
-              <stop offset="0" stopColor="#4fe8a0" stopOpacity=".34" />
+              <stop offset="0" stopColor="#4fe8a0" stopOpacity=".2" />
+              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
+            </radialGradient>
+            {/* foschia dove il disco tocca l'acqua */}
+            <radialGradient id="soon-haze">
+              <stop offset="0" stopColor="#c8ffe0" stopOpacity=".22" />
+              <stop offset=".4" stopColor="#9ef0c6" stopOpacity=".08" />
               <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
             </radialGradient>
             <clipPath id="soon-above">
@@ -93,21 +93,30 @@ export default function SoonScene() {
 
           <rect width="1600" height="900" fill="url(#soon-sky)" />
 
-          {/* su telefono il sole si rimpicciolisce attorno all'orizzonte (vedi CSS) */}
+          {/* il disco tramonta sull'orizzonte; su telefono si rimpicciolisce (vedi CSS) */}
           <g className="soon-sun-wrap">
             <g className="soon-sun">
               <circle cx="800" cy="600" r="460" fill="url(#soon-halo)" className="soon-sun__halo" />
               <g clipPath="url(#soon-above)">
-                <circle cx="800" cy="600" r="480" fill="url(#soon-corona)" />
-                <g clipPath="url(#soon-disc)">
-                  <circle cx="800" cy="600" r="240" fill="url(#soon-sun)" opacity=".82" />
-                  <rect x="560" y="360" width="480" height="480" filter="url(#soon-surface)" opacity=".35" />
-                  {/* tagli orizzontali da tramonto retrò, sfumati e sempre più spessi verso l'orizzonte */}
-                  <g filter="url(#soon-blur-stripes)">
-                    {stripes.map((y, i) => (
-                      <rect key={y} x="540" y={y - 4 - i} width="520" height={3.5 + i * 1.7} fill="#06130c" opacity=".88" />
-                    ))}
-                  </g>
+                <circle cx="800" cy="600" r="240" fill="url(#soon-vinyl)" />
+                {/* solchi */}
+                {grooves.map((r, i) => (
+                  <circle key={r} cx="800" cy="600" r={r} fill="none" stroke="#9ef0c6" strokeOpacity={i % 3 === 0 ? 0.13 : 0.06} strokeWidth="1" />
+                ))}
+                {/* riflessi di luce sui solchi */}
+                <path d="M800 600 L963 424 A240 240 0 0 1 1010 486 Z" fill="url(#soon-sheen)" />
+                <path d="M800 600 L637 776 A240 240 0 0 1 590 714 Z" fill="url(#soon-sheen)" />
+                <path d="M800 600 L637 424 A240 240 0 0 0 590 486 Z" fill="url(#soon-sheen)" opacity=".5" />
+                {/* bordo luminoso che stacca il disco dal cielo */}
+                <circle cx="800" cy="600" r="239" fill="none" stroke="#7ee9b4" strokeOpacity=".55" strokeWidth="2" className="soon-vinyl-rim" />
+                {/* etichetta che gira lentamente */}
+                <g className="soon-vinyl-label">
+                  <circle cx="800" cy="600" r="80" fill="url(#soon-label)" />
+                  <circle cx="800" cy="600" r="80" fill="none" stroke="#0a2a1a" strokeOpacity=".5" strokeWidth="2" />
+                  <text className="soon-vinyl-text">
+                    <textPath href="#soon-label-path" startOffset="0">PANORAMA RECORDS · PANORAMA RECORDS ·</textPath>
+                  </text>
+                  <circle cx="800" cy="600" r="7" fill="#06110b" />
                 </g>
               </g>
             </g>
@@ -133,7 +142,7 @@ export default function SoonScene() {
             ))}
             <g filter="url(#soon-ripple)" className="soon-reflection">
               {reflection.map((b) => (
-                <rect key={b.y} x={b.x} y={b.y} width={b.w} height={b.h} fill="#9dffcf" opacity={b.o} />
+                <rect key={b.y} x={b.x} y={b.y} width={b.w} height={b.h} fill="#7ee9b4" opacity={b.o} />
               ))}
             </g>
           </g>

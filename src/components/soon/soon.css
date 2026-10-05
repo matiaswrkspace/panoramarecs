@@ -34,8 +34,15 @@
   100% { opacity: 1; transform: scale(1); filter: none; }
 }
 
+/* ---------- Disco in vinile ---------- */
+.soon-vinyl-rim { filter: drop-shadow(0 0 6px rgba(79, 232, 160, 0.6)); }
+/* l'etichetta gira piano (un giro ogni 12 s); solchi e riflessi restano fermi come la luce */
+.soon-vinyl-label { transform-box: view-box; transform-origin: 800px 600px; animation: soon-spin 12s linear infinite; }
+@keyframes soon-spin { to { transform: rotate(360deg); } }
+.soon-vinyl-text { font-family: var(--font-sans), sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 2.6px; fill: #08251a; }
+
 /* ---------- Acqua: onde e riflesso del sole ---------- */
-.soon-water line { transform-box: fill-box; transform-origin: center; animation: soon-ripple 8s ease-in-out infinite; }
+.soon-water line { opacity: 0.8; transform-box: fill-box; transform-origin: center; animation: soon-ripple 8s ease-in-out infinite; }
 @keyframes soon-ripple { 50% { transform: scaleX(0.9) translateX(4px); opacity: 0.7; } }
 
 .soon-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
