@@ -6,20 +6,22 @@ import "./soon.css";
 // Pagina "coming soon": titoli di testa da film anni '70-'80 visti su videocassetta,
 // tutto in CSS/SVG (nitido a ogni risoluzione, nessun file video da scaricare).
 //
-// Timeline (secondi): 0.2 si aprono le bande nere · 0.6 orizzonte · 1.2 sole ·
-// 1.8 acqua e riflesso · 3.2 insegna neon · 4.8 SOON cromato · 5.8 contatti.
-// Poi resta viva a 124 BPM: il riflesso tremola sull'acqua, il sole pulsa sul battere,
+// Apertura: la scena, già composta, emerge dal nero in un'unica ripresa (0.2–3.6 s:
+// carrellata in avanti, messa a fuoco, luce che sale) · 2.6 si accende l'insegna ·
+// 3.6 arriva SOON · 4.8 contatti.
+// Poi resta viva a 124 BPM: il riflesso ondeggia piano sull'acqua, il sole pulsa sul battere,
 // il puntino BPM lampeggia. Nessun tremolio: solo colori e righe da nastro VHS.
 const BPM = 124;
 
 // Riflesso del sole: bande luminose sempre più strette e deboli verso il basso,
 // spezzate da un'ondulazione animata. Posizioni fisse (niente casuale al render).
 const HORIZON = 640;
-const reflection = Array.from({ length: 40 }, (_, i) => {
+// Misura intermedia: più largo del riflesso originale, più stretto della versione larga.
+const reflection = Array.from({ length: 41 }, (_, i) => {
   const y = 646 + i * 6;
-  const k = 1 - (y - 646) / 280;
+  const k = 1 - (y - 646) / 305;
   const jitter = Math.sin(i * 12.9898) * 0.5 + 0.5; // pseudo-casuale ma stabile
-  const w = Math.max(18, 300 * k * (0.55 + jitter * 0.6));
+  const w = Math.max(21, 385 * k ** 0.92 * (0.58 + jitter * 0.55));
   return { y, w, x: 800 - w / 2 + Math.cos(i * 7.31) * 15, h: 2 + jitter * 2.5, o: +(0.55 * k + 0.05).toFixed(2) };
 });
 const ripples = [640, 656, 676, 700, 728, 760, 796, 836];
@@ -56,7 +58,7 @@ export default function SoonScene() {
             {/* Acqua: il riflesso tremola deformato da un'ondulazione animata */}
             <filter id="soon-ripple" x="-30%" y="-10%" width="160%" height="130%">
               <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="2" seed="7">
-                <animate attributeName="baseFrequency" dur="8s" values="0.006 0.09;0.009 0.12;0.006 0.09" repeatCount="indefinite" />
+                <animate attributeName="baseFrequency" dur="20s" values="0.006 0.09;0.0075 0.105;0.006 0.09" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1" />
               </feTurbulence>
               <feDisplacementMap in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G" />
               <feGaussianBlur stdDeviation="1.1" />
@@ -115,7 +117,7 @@ export default function SoonScene() {
           <Logo as="h1" className="soon-logo" />
           <p className="soon-word" aria-label="Soon">
             {"SOON".split("").map((l, i) => (
-              <span key={i} style={{ animationDelay: `${4.8 + i * 0.09}s` }}>{l}</span>
+              <span key={i}>{l}</span>
             ))}
           </p>
         </div>

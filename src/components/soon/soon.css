@@ -12,33 +12,33 @@
 /* ---------- Cielo / sole / acqua ---------- */
 .soon-sky { position: absolute; inset: 0; width: 100%; height: 100%; filter: blur(0.4px); }
 
-.soon-sun { transform: translateY(260px); opacity: 0; animation: soon-rise 2.4s var(--ease-out) 1.2s forwards; }
-@keyframes soon-rise { to { transform: none; opacity: 1; } }
-.soon-sun__halo { transform-box: fill-box; transform-origin: center; animation: soon-beat var(--beat) ease-out 3.6s infinite; }
+.soon-sun__halo { transform-box: fill-box; transform-origin: center; animation: soon-beat var(--beat) ease-out 3s infinite; }
 @keyframes soon-beat { 0% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.72; transform: scale(1); } }
 
 .soon-horizon {
   stroke: #c8ffe0; stroke-width: 1.5; opacity: 0.8;
-  stroke-dasharray: 1600; stroke-dashoffset: 1600;
-  animation: soon-draw 1.6s var(--ease-io) 0.6s forwards;
   filter: drop-shadow(0 0 6px rgba(79, 232, 160, 0.9));
 }
-@keyframes soon-draw { to { stroke-dashoffset: 0; } }
 
 @keyframes soon-fade { to { opacity: 1; } }
 
-/* ---------- Palcoscenico ---------- */
-.soon-stage { position: absolute; inset: 0; }
+/* ---------- Apertura: un'unica ripresa che emerge dal nero ----------
+   La scena è già composta; si avvicina lentamente, va a fuoco e prende luce. */
+.soon-stage {
+  position: absolute; inset: 0; transform-origin: 50% 60%;
+  animation: soon-reveal 3.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s both;
+}
+@keyframes soon-reveal {
+  0% { opacity: 0; transform: scale(1.12); filter: blur(14px) brightness(0.35); }
+  55% { opacity: 1; filter: blur(3px) brightness(0.8); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
 
 /* ---------- Acqua: onde e riflesso del sole ---------- */
-.soon-water { opacity: 0; animation: soon-fade 1.6s ease 1.8s forwards; }
-/* il riflesso respira sul battere, come il sole */
-.soon-reflection { animation: soon-shimmer var(--beat) ease-out 3.6s infinite; }
-.soon-water line { transform-box: fill-box; transform-origin: center; animation: soon-ripple 3.2s ease-in-out infinite; }
-@keyframes soon-ripple { 50% { transform: scaleX(0.82) translateX(6px); opacity: 0.55; } }
-@keyframes soon-shimmer { 0% { opacity: 1; } 100% { opacity: 0.78; } }
+.soon-water line { transform-box: fill-box; transform-origin: center; animation: soon-ripple 8s ease-in-out infinite; }
+@keyframes soon-ripple { 50% { transform: scaleX(0.9) translateX(4px); opacity: 0.7; } }
 
-.soon-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; animation: soon-fade 2s ease 2.4s forwards; }
+.soon-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
 /* ---------- Testi ---------- */
 .soon-content {
@@ -51,7 +51,7 @@
 /* Insegna che si accende: pochi tremolii all'accensione, poi luce ferma */
 .soon-logo {
   font-size: clamp(56px, min(13vw, 19vh), 420px); line-height: 1.15; padding: 0 0.12em;
-  opacity: 0; animation: soon-ignite 1.3s steps(1, end) 3.2s forwards;
+  opacity: 0; animation: soon-ignite 1.3s steps(1, end) 2.6s forwards;
   color: #d2ffe6;
   text-shadow: -2px 0 rgba(255, 80, 120, 0.32), 2px 0 rgba(70, 190, 255, 0.3),
     0 0 4px #fff, 0 0 14px rgba(79, 232, 160, 0.95), 0 0 34px rgba(79, 232, 160, 0.6), 0 0 80px rgba(79, 232, 160, 0.35);
@@ -61,10 +61,11 @@
   40% { opacity: 1; } 46% { opacity: 0.35; } 60%, 100% { opacity: 1; }
 }
 
-/* SOON: lettere cromate anni '80 che arrivano larghe e sfocate e si stringono */
+/* SOON: parola cromata anni '80 che arriva larga e sfocata e si stringe, tutta insieme */
 .soon-word {
   display: flex; justify-content: center; gap: 0.16em; margin-top: clamp(4px, 1vh, 14px);
   font-style: italic; transform: skewX(-6deg);
+  opacity: 0; animation: soon-word-in 1.8s var(--ease-out) 3.6s forwards;
   font-weight: 700; font-size: clamp(48px, min(12vw, 15vh), 360px); line-height: 1; letter-spacing: 0;
 }
 .soon-word span {
@@ -72,14 +73,8 @@
   background: linear-gradient(180deg, #f4fff8 0%, #c4f7dc 30%, #3fae7c 47%, #06150d 50%, #0f5a3a 52%, #4fe8a0 70%, #ecfff4 100%);
   -webkit-background-clip: text; background-clip: text;
   text-shadow: -2px 0 rgba(255, 80, 120, 0.26), 2px 0 rgba(70, 190, 255, 0.24), 0 0 26px rgba(79, 232, 160, 0.45);
-  opacity: 0; transform: translateX(var(--x, 0)) scale(1.4); filter: blur(14px);
-  animation: soon-letter 1.4s var(--ease-out) forwards;
 }
-.soon-word span:nth-child(1) { --x: -0.6em; }
-.soon-word span:nth-child(2) { --x: -0.2em; }
-.soon-word span:nth-child(3) { --x: 0.2em; }
-.soon-word span:nth-child(4) { --x: 0.6em; }
-@keyframes soon-letter { to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes soon-word-in { from { opacity: 0; gap: 0.7em; filter: blur(10px); } to { opacity: 1; gap: 0.16em; filter: blur(0); } }
 
 .soon-sub, .soon-contacts { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.9); opacity: 0; transform: translateY(14px); animation: soon-up 1.2s var(--ease-out) forwards; }
 .soon-info::before {
@@ -98,7 +93,7 @@
 }
 .soon-sub__dot { color: #4fe8a0; }
 .soon-contacts {
-  animation-delay: 5.8s;
+  animation-delay: 4.8s;
   display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px;
   font-size: clamp(12px, min(0.9vw, 1.45vh), 20px); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5);
 }
@@ -107,13 +102,9 @@
 @keyframes soon-up { to { opacity: 1; transform: none; } }
 
 /* ---------- Bande cinema, grana, vignettatura ---------- */
-.soon-bars i {
-  position: absolute; left: 0; right: 0; height: 50.5%; background: #000; z-index: 5;
-  animation: soon-bars 1.6s var(--ease-io) 0.2s forwards;
-}
+.soon-bars i { position: absolute; left: 0; right: 0; height: 5.5vh; background: #000; z-index: 5; }
 .soon-bars i:first-child { top: 0; }
 .soon-bars i:last-child { bottom: 0; }
-@keyframes soon-bars { to { height: 5.5vh; } }
 
 .soon-grain {
   position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0.08;
@@ -142,7 +133,7 @@
   position: absolute; z-index: 6; top: 0; left: 0; right: 0; height: max(5.5vh, 40px);
   display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(16px, 3vw, 56px);
   font-size: clamp(10px, min(0.85vw, 1.35vh), 17px); font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase;
-  color: rgba(225, 255, 238, 0.62); opacity: 0; animation: soon-fade 1.2s ease 1s forwards;
+  color: rgba(225, 255, 238, 0.62); opacity: 0; animation: soon-fade 1.6s ease 1.6s forwards;
 }
 .soon-hud__bpm { display: inline-flex; align-items: center; }
 .soon-hud__bpm i {
@@ -168,7 +159,7 @@
   .soon-info { bottom: 5vh; }
   .soon-sub { font-size: clamp(11px, 2vw, 18px); }
   .soon-contacts { font-size: clamp(12px, 1.8vw, 17px); }
-  @keyframes soon-bars { to { height: 0; } }
+  .soon-bars i { height: 0; }
 }
 
 /* ---------- Schermi stretti: righe d'informazione impilate ---------- */
@@ -185,7 +176,7 @@
   .soon-sub { flex-direction: row; letter-spacing: 0.3em; }
   .soon-sub__dot { display: inline; }
   .soon-contacts { flex-direction: row; margin-top: 6px; }
-  @keyframes soon-bars { to { height: 0; } }
+  .soon-bars i { height: 0; }
 }
 
 /* ---------- Movimento ridotto: scena già composta, nessuna animazione ---------- */
