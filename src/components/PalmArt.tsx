@@ -1,7 +1,7 @@
 // Illustrazioni neon a tema palme per le card Vip e Cena.
 // Disegnate in SVG: leggere, nitide a ogni dimensione, colori dal CSS.
 
-type P = [number, number];
+export type P = [number, number];
 const r = (n: number) => Math.round(n * 10) / 10;
 
 function bezier(p0: P, c: P, p1: P, t: number): { pt: P; n: P } {
@@ -15,7 +15,7 @@ function bezier(p0: P, c: P, p1: P, t: number): { pt: P; n: P } {
 
 // Una fronda: lama curva e affusolata con il bordo frastagliato (le foglioline),
 // più la nervatura centrale.
-function frond(p0: P, c: P, p1: P, width = 9, teeth = 7) {
+export function frond(p0: P, c: P, p1: P, width = 9, teeth = 7) {
   const steps = teeth * 2;
   const upper: string[] = [];
   const lower: string[] = [];
@@ -32,7 +32,7 @@ function frond(p0: P, c: P, p1: P, width = 9, teeth = 7) {
 }
 
 // Chioma di una palma attorno al punto `top`, con fronde arcuate che ricadono.
-function crown(top: P, flip = 1) {
+export function crown(top: P, flip = 1) {
   const ends: P[] = [[-56, 30], [-54, -6], [-24, -36], [14, -40], [40, -16]];
   const parts = ends.map(([dx, dy]) => {
     const end: P = [top[0] + dx * flip, top[1] + dy];
@@ -43,7 +43,7 @@ function crown(top: P, flip = 1) {
 }
 
 // Tronco leggermente curvo con gli anelli tipici della palma.
-function trunk(base: P, ctrl: P, top: P) {
+export function trunk(base: P, ctrl: P, top: P) {
   let d = `M${base[0]} ${base[1]}Q${ctrl[0]} ${ctrl[1]} ${top[0]} ${top[1]}`;
   for (let i = 1; i < 8; i++) {
     const t = i / 8;
