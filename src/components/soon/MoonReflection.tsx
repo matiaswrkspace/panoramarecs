@@ -2,13 +2,12 @@
 
 import { useEffect, useRef } from "react";
 
-// Riflesso della luna sull'acqua, animato: righe di luce spezzate che scorrono
-// piano di lato e brillano, con un'onda lenta che viaggia verso chi guarda.
+// Riflesso della luna sull'acqua, animato come nella realtà: una scia di tante
+// scintille che si accendono e si spengono sulle onde, con creste di luce che
+// rotolano lente verso chi guarda e il bagliore morbido della luna riflessa.
 // Leggero: disegna solo nella zona sotto la luna, ogni tratto è la copia di un
 // tratto sfumato preparato una volta sola. Coordinate dello stesso viewBox 1600×900
 // "a riempire" degli altri livelli, così resta allineato alla luna su ogni schermo.
-const ROWS = 29;
-const SEGS = 3;
 
 export default function MoonReflection() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -41,22 +40,22 @@ export default function MoonReflection() {
     sctx.fillStyle = gy;
     sctx.fillRect(0, 0, 128, 16);
 
-    // righe fisse (posizioni pseudo-casuali ma stabili)
-    const rnd = (n: number) => Math.sin(n * 12.9898 + 78.233) * 0.5 + 0.5;
-    const rows = Array.from({ length: ROWS }, (_, i) => {
-      const y = 646 + i * 6;
-      const k = 1 - (y - 646) / 205;
+    // Scia di scintille: tante, minuscole e fitte all'orizzonte, più grandi e rade
+    // verso chi guarda; la scia si allarga avvicinandosi (prospettiva).
+    const rnd = (n: number) => {
+      const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+      return x - Math.floor(x);
+    };
+    const COUNT = 440;
+    const glints = Array.from({ length: COUNT }, (_, i) => {
+      const d = rnd(i) ** 1.35; // profondità 0 = orizzonte, 1 = fine della scia
+      const u = (rnd(i + 1000) + rnd(i + 2000) + rnd(i + 3000)) / 3 - 0.5; // più fitte al centro
       return {
-        y,
-        k,
-        h: 2 + rnd(i) * 2.5,
-        alpha: 0.42 * k + 0.05,
-        segs: Array.from({ length: SEGS }, (_, j) => ({
-          pos: (j - 1) * 0.55 + (rnd(i * 7 + j) - 0.5) * 0.3, // posizione nella colonna (-1..1)
-          len: 0.45 + rnd(i * 3 + j * 5) * 0.5, // lunghezza relativa
-          speed: 0.18 + rnd(i * 11 + j) * 0.22, // scorrimento laterale lento
-          phase: rnd(i * 13 + j * 3) * Math.PI * 2,
-        })),
+        d,
+        u: u * 2, // posizione nella larghezza della scia (-1..1)
+        len: 0.6 + rnd(i + 4000) * 0.9,
+        rate: 0.5 + rnd(i + 5000) * 0.9, // ritmo con cui la scintilla si accende e si spegne
+        phase: rnd(i + 6000) * Math.PI * 2,
       };
     });
 
@@ -79,24 +78,40 @@ export default function MoonReflection() {
       const sx = portrait ? 0.6 : 0.7; // l'acqua si restringe come il resto (vedi CSS)
       const X = (x: number) => W / 2 + (x - 800) * s;
       const Y = (y: number) => H / 2 + (y - 450) * s;
-      ctx.clearRect(0, Y(640), W, H - Y(640));
-      for (let i = 0; i < ROWS; i++) {
-        const r = rows[i];
-        const half = (385 * r.k ** 0.92 * sx) / 2; // metà larghezza della colonna di luce
-        // onda lenta che viaggia verso chi guarda: ogni riga respira con un piccolo ritardo
-        const wave = Math.sin(t * 0.9 - i * 0.55);
-        const sway = Math.sin(t * 0.35 + i * 0.3) * 10 * sx; // la colonna ondeggia appena
-        for (const g of r.segs) {
-          const drift = Math.sin(t * g.speed + g.phase); // scorrimento laterale di ogni tratto
-          const cx = 800 + sway + (g.pos + drift * 0.22) * half;
-          const len = half * g.len * (0.85 + 0.15 * wave);
-          const twinkle = 0.5 + 0.5 * Math.sin(t * (0.5 + g.speed) + g.phase * 1.7); // brillio lento
-          const a = r.alpha * (0.5 + 0.3 * twinkle + 0.2 * wave);
-          if (a <= 0.01) continue;
-          ctx.globalAlpha = Math.min(1, a);
-          // lo sprite sfuma ai bordi: lo allargo un po' perché la parte piena sia lunga "len"
-          ctx.drawImage(sprite, X(cx - len * 0.65), Y(r.y) - r.h * s, len * 1.3 * s, r.h * 2 * s);
-        }
+      const top = Y(640);
+      ctx.clearRect(0, top, W, H - top);
+
+      // bagliore morbido dell'immagine della luna riflessa, che respira piano
+      const glowW = 240 * sx * s;
+      const glowH = 120 * s;
+      const glow = ctx.createRadialGradient(X(800), top, 0, X(800), top, glowW);
+      glow.addColorStop(0, "rgba(220, 245, 230, 0.26)");
+      glow.addColorStop(0.5, "rgba(190, 235, 210, 0.07)");
+      glow.addColorStop(1, "rgba(190, 235, 210, 0)");
+      ctx.save();
+      ctx.translate(X(800), top);
+      ctx.scale(1, glowH / glowW);
+      ctx.translate(-X(800), -top);
+      ctx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 0.6);
+      ctx.fillStyle = glow;
+      ctx.fillRect(X(800) - glowW, top, glowW * 2, glowW);
+      ctx.restore();
+
+      // scintille
+      for (const g of glints) {
+        const y = 646 + g.d * 170; // fino a circa due terzi dell'acqua
+        const half = 120 * sx * (0.55 + 0.75 * g.d); // la scia si allarga verso chi guarda
+        const crest = 0.55 + 0.45 * Math.sin(t * 1.0 - g.d * 9); // creste che rotolano verso di noi
+        const flash = Math.max(0, Math.sin(t * g.rate + g.phase)) ** 2; // si accende e si spegne
+        const center = Math.exp(-(g.u * g.u) * 1.6); // più luce al centro della scia
+        const fade = g.d < 0.7 ? 1 : 1 - (g.d - 0.7) / 0.3; // sfuma in fondo
+        const a = 1.25 * flash * crest * center * fade * (0.95 - g.d * 0.35);
+        if (a < 0.02) continue;
+        const x = 800 + g.u * half + Math.sin(t * 0.45 + g.d * 7 + g.phase) * 5 * (0.4 + g.d);
+        const len = (5 + 26 * g.d) * g.len;
+        const h = 0.7 + 2.2 * g.d;
+        ctx.globalAlpha = Math.min(1, a);
+        ctx.drawImage(sprite, X(x - len * 0.65), Y(y) - h * s, len * 1.3 * s, h * 2 * s);
       }
       ctx.globalAlpha = 1;
       if (!still) frame = requestAnimationFrame(draw);
