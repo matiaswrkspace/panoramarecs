@@ -175,7 +175,10 @@ export default function SoonScene() {
         <Particles />
 
         <div className="soon-content">
-          <Logo as="h1" className="soon-logo" />
+          <h1 className="soon-title">
+            <Logo className="soon-logo" />
+            <span className="soon-records">Records</span>
+          </h1>
           <p className="soon-word" aria-label="Soon">
             {"SOON".split("").map((l, i) => (
               <span key={i}>{l}</span>

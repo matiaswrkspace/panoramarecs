@@ -68,6 +68,17 @@
   padding: 0 16px;
 }
 
+/* Insegna "Panorama Records": corsivo neon e, sotto, RECORDS spaziato che si accende subito dopo */
+.soon-title { display: flex; flex-direction: column; align-items: center; font-weight: 400; }
+.soon-records {
+  margin-top: -0.35em; padding-left: 0.6em; /* compensa la spaziatura dell'ultima lettera */
+  font-family: var(--font-sans), sans-serif; font-weight: 600; text-transform: uppercase;
+  font-size: clamp(14px, min(2.3vw, 3.3vh), 44px); letter-spacing: 0.6em; color: #d2ffe6;
+  text-shadow: -1.5px 0 rgba(255, 80, 120, 0.3), 1.5px 0 rgba(70, 190, 255, 0.28),
+    0 0 6px rgba(79, 232, 160, 0.9), 0 0 18px rgba(79, 232, 160, 0.5);
+  opacity: 0; animation: soon-ignite 1s steps(1, end) 3s forwards;
+}
+
 /* Insegna che si accende: pochi tremolii all'accensione, poi luce ferma */
 .soon-logo {
   font-size: clamp(56px, min(13vw, 19vh), 420px); line-height: 1.15; padding: 0 0.12em;
@@ -174,6 +185,7 @@
 /* ---------- Schermi verticali (telefoni, iPad verticale) ---------- */
 @media (max-aspect-ratio: 1/1) {
   .soon { --wrap: 0.58; }
+  .soon-records { font-size: clamp(13px, 3.6vw, 34px); }
   .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.58); }
   .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.6); }
   .soon-content { top: 13vh; }
