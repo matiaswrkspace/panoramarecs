@@ -32,7 +32,7 @@
 
 /* ---------- Palme ---------- */
 .soon-palm {
-  position: absolute; bottom: -2vh; height: min(88vh, 900px); width: auto; overflow: visible;
+  position: absolute; bottom: -2vh; height: 88vh; width: auto; overflow: visible;
   filter: drop-shadow(0 0 3px rgba(57, 255, 143, 0.9)) drop-shadow(0 0 18px rgba(57, 255, 143, 0.35));
   opacity: 0; animation: soon-palm-in 1.8s var(--ease-out) 2s forwards;
 }
@@ -67,12 +67,13 @@
 .soon-content {
   position: relative; z-index: 2; text-align: center;
   display: flex; flex-direction: column; align-items: center;
-  padding: 0 16px; margin-top: -14vh;
+  position: absolute; left: 0; right: 0; top: 11vh;
+  padding: 0 16px;
 }
 
 /* Insegna che si accende: tremolii irregolari, poi luce piena e respiro lento */
 .soon-logo {
-  font-size: clamp(72px, 13vw, 220px); line-height: 1.15; padding: 0 0.12em;
+  font-size: clamp(56px, min(13vw, 19vh), 420px); line-height: 1.15; padding: 0 0.12em;
   opacity: 0; animation: soon-ignite 1.3s steps(1, end) 3.2s forwards, neon 7s 5s infinite;
 }
 @keyframes soon-ignite {
@@ -83,7 +84,7 @@
 /* SOON: lettere vuote al neon che arrivano larghe e sfocate e si stringono */
 .soon-word {
   display: flex; justify-content: center; gap: 0.16em; margin-top: clamp(4px, 1vh, 14px);
-  font-weight: 700; font-size: clamp(64px, 12vw, 200px); line-height: 1; letter-spacing: 0;
+  font-weight: 700; font-size: clamp(48px, min(12vw, 15vh), 360px); line-height: 1; letter-spacing: 0;
 }
 .soon-word span {
   color: transparent; -webkit-text-stroke: 1.5px #b8ffd9;
@@ -110,13 +111,13 @@
 .soon-sub {
   animation-delay: 5.8s;
   display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px;
-  font-size: clamp(11px, 1.15vw, 15px); letter-spacing: 0.42em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(11px, min(1.1vw, 1.7vh), 24px); letter-spacing: 0.42em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72);
 }
 .soon-sub__dot { color: #39ff8f; }
 .soon-contacts {
   margin-top: 14px; animation-delay: 6.2s;
   display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px;
-  font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5);
+  font-size: clamp(12px, min(0.9vw, 1.45vh), 20px); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5);
 }
 .soon-contacts a { color: #b8ffd9; text-decoration: none; border-bottom: 1px solid rgba(184, 255, 217, 0.35); transition: border-color 0.2s, color 0.2s; }
 .soon-contacts a:hover { color: #fff; border-color: #fff; }
@@ -145,19 +146,44 @@
   background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.75));
 }
 
-/* ---------- Mobile ---------- */
-@media (max-width: 700px) {
-  /* palme più piccole appoggiate ai bordi: incorniciano la scena */
+/* ---------- Schermi orizzontali (computer, iPad orizzontale, telefono ruotato) ---------- */
+/* il sole si abbassa sull'orizzonte così i titoli restano nel cielo libero */
+@media (min-aspect-ratio: 1/1) {
+  .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.62); }
+  .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.7); }
+}
+
+/* ---------- Schermi verticali (telefoni, iPad verticale) ---------- */
+@media (max-aspect-ratio: 1/1) {
   .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.58); }
   .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.6); }
-  .soon-palm { height: 36vh; bottom: -1vh; }
-  .soon-palm--left { left: calc(-0.34 * 36vh); }
-  .soon-palm--right { right: calc(-0.34 * 36vh); }
-  .soon-content { margin-top: -16vh; }
-  .soon-info { bottom: 4vh; }
+  /* palme più piccole appoggiate ai bordi: incorniciano la scena */
+  .soon-palm { height: 40vh; bottom: -1vh; }
+  .soon-palm--left { left: calc(-0.34 * 40vh); }
+  .soon-palm--right { right: calc(-0.34 * 40vh); }
+  .soon-content { top: 13vh; }
+  .soon-logo { font-size: clamp(56px, 16vw, 200px); }
+  .soon-word { font-size: clamp(48px, 13vw, 170px); }
+  .soon-info { bottom: 5vh; }
+  .soon-sub { font-size: clamp(11px, 2vw, 18px); }
+  .soon-contacts { font-size: clamp(12px, 1.8vw, 17px); }
+  @keyframes soon-bars { to { height: 0; } }
+}
+
+/* ---------- Schermi stretti: righe d'informazione impilate ---------- */
+@media (max-width: 700px) {
   .soon-sub { letter-spacing: 0.28em; flex-direction: column; gap: 6px; }
   .soon-sub__dot { display: none; }
   .soon-contacts { flex-direction: column; gap: 8px; }
+}
+
+/* ---------- Telefono ruotato (poco spazio in altezza) ---------- */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  .soon-content { top: 7vh; }
+  .soon-info { bottom: 4vh; }
+  .soon-sub { flex-direction: row; letter-spacing: 0.3em; }
+  .soon-sub__dot { display: inline; }
+  .soon-contacts { flex-direction: row; margin-top: 6px; }
   @keyframes soon-bars { to { height: 0; } }
 }
 
