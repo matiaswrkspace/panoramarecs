@@ -10,7 +10,7 @@ import "./soon.css";
 // carrellata in avanti, messa a fuoco, luce che sale) · 2.6 si accende l'insegna ·
 // 3.6 arriva SOON · 4.8 contatti.
 // Poi resta viva a 124 BPM: il riflesso ondeggia piano sull'acqua, il sole pulsa sul battere,
-// il puntino BPM lampeggia. Nessun tremolio: solo colori e righe da nastro VHS.
+// la spia rossa "Recording" lampeggia. Nessun tremolio: solo colori e righe da nastro VHS.
 const BPM = 124;
 
 // Riflesso del sole: bande luminose sempre più strette e deboli verso il basso,
@@ -138,7 +138,7 @@ export default function SoonScene() {
       <div className="soon-bars" aria-hidden="true"><i /><i /></div>
       <header className="soon-hud">
         <span>Panorama Records</span>
-        <span className="soon-hud__bpm"><i aria-hidden="true" />{BPM} BPM</span>
+        <span className="soon-hud__rec"><i aria-hidden="true" />Recording</span>
       </header>
     </main>
   );

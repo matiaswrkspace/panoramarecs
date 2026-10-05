@@ -128,19 +128,21 @@
     radial-gradient(120% 90% at 50% 40%, rgba(255, 230, 190, 0.025), transparent 70%);
 }
 
-/* ---------- Intestazione: Panorama Records a sinistra, BPM a destra ---------- */
+/* ---------- Intestazione: Panorama Records a sinistra, spia Recording a destra ---------- */
 .soon-hud {
   position: absolute; z-index: 6; top: 0; left: 0; right: 0; height: max(5.5vh, 40px);
   display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(16px, 3vw, 56px);
   font-size: clamp(10px, min(0.85vw, 1.35vh), 17px); font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase;
   color: rgba(225, 255, 238, 0.62); opacity: 0; animation: soon-fade 1.6s ease 1.6s forwards;
 }
-.soon-hud__bpm { display: inline-flex; align-items: center; }
-.soon-hud__bpm i {
-  width: 0.6em; height: 0.6em; margin-right: 0.8em; border-radius: 50%;
-  background: #4fe8a0; box-shadow: 0 0 8px rgba(79, 232, 160, 0.9); animation: soon-tick var(--beat) steps(1) infinite;
+.soon-hud__rec { display: inline-flex; align-items: center; }
+/* spia rossa da videocamera: si accende e si spegne piano, una volta al secondo */
+.soon-hud__rec i {
+  width: 0.75em; height: 0.75em; margin-right: 0.8em; border-radius: 50%;
+  background: #ff2d3d; box-shadow: 0 0 10px rgba(255, 45, 61, 0.85);
+  animation: soon-rec 2s ease-in-out infinite;
 }
-@keyframes soon-tick { 0% { opacity: 1; } 30% { opacity: 0.15; } }
+@keyframes soon-rec { 0%, 45% { opacity: 1; } 55%, 95% { opacity: 0.2; } 100% { opacity: 1; } }
 
 /* ---------- Schermi orizzontali (computer, iPad orizzontale, telefono ruotato) ---------- */
 /* il sole si abbassa sull'orizzonte così i titoli restano nel cielo libero */
