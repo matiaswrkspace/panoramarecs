@@ -10,7 +10,7 @@
 }
 
 /* ---------- Cielo / sole / acqua ---------- */
-.soon-sky { position: absolute; inset: 0; width: 100%; height: 100%; filter: blur(0.5px) saturate(0.85); }
+.soon-sky { position: absolute; inset: 0; width: 100%; height: 100%; filter: blur(0.4px); }
 
 .soon-sun { transform: translateY(260px); opacity: 0; animation: soon-rise 2.4s var(--ease-out) 1.2s forwards; }
 @keyframes soon-rise { to { transform: none; opacity: 1; } }
@@ -18,10 +18,10 @@
 @keyframes soon-beat { 0% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.72; transform: scale(1); } }
 
 .soon-horizon {
-  stroke: #e3efd6; stroke-width: 1.5; opacity: 0.7;
+  stroke: #c8ffe0; stroke-width: 1.5; opacity: 0.8;
   stroke-dasharray: 1600; stroke-dashoffset: 1600;
   animation: soon-draw 1.6s var(--ease-io) 0.6s forwards;
-  filter: drop-shadow(0 0 5px rgba(143, 220, 174, 0.8));
+  filter: drop-shadow(0 0 6px rgba(79, 232, 160, 0.9));
 }
 @keyframes soon-draw { to { stroke-dashoffset: 0; } }
 
@@ -34,7 +34,9 @@
 .soon-water { opacity: 0; animation: soon-fade 1.6s ease 1.8s forwards; }
 /* il riflesso respira sul battere, come il sole */
 .soon-reflection { animation: soon-shimmer var(--beat) ease-out 3.6s infinite; }
-@keyframes soon-shimmer { 0% { opacity: 1; } 100% { opacity: 0.85; } }
+.soon-water line { transform-box: fill-box; transform-origin: center; animation: soon-ripple 3.2s ease-in-out infinite; }
+@keyframes soon-ripple { 50% { transform: scaleX(0.82) translateX(6px); opacity: 0.55; } }
+@keyframes soon-shimmer { 0% { opacity: 1; } 100% { opacity: 0.78; } }
 
 .soon-particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; animation: soon-fade 2s ease 2.4s forwards; }
 
@@ -50,9 +52,9 @@
 .soon-logo {
   font-size: clamp(56px, min(13vw, 19vh), 420px); line-height: 1.15; padding: 0 0.12em;
   opacity: 0; animation: soon-ignite 1.3s steps(1, end) 3.2s forwards;
-  color: #e4f2dc;
-  text-shadow: -2.5px 0 rgba(255, 90, 90, 0.38), 2.5px 0 rgba(80, 200, 255, 0.32),
-    0 0 4px rgba(255, 250, 230, 0.8), 0 0 14px rgba(143, 220, 174, 0.75), 0 0 34px rgba(143, 220, 174, 0.45), 0 0 70px rgba(143, 220, 174, 0.25);
+  color: #d2ffe6;
+  text-shadow: -2px 0 rgba(255, 80, 120, 0.32), 2px 0 rgba(70, 190, 255, 0.3),
+    0 0 4px #fff, 0 0 14px rgba(79, 232, 160, 0.95), 0 0 34px rgba(79, 232, 160, 0.6), 0 0 80px rgba(79, 232, 160, 0.35);
 }
 @keyframes soon-ignite {
   0% { opacity: 0; } 8% { opacity: 0.8; } 12% { opacity: 0.1; } 22% { opacity: 0.9; } 26% { opacity: 0.2; }
@@ -66,10 +68,10 @@
   font-weight: 700; font-size: clamp(48px, min(12vw, 15vh), 360px); line-height: 1; letter-spacing: 0;
 }
 .soon-word span {
-  color: transparent; -webkit-text-stroke: 1px rgba(240, 240, 220, 0.8);
-  background: linear-gradient(180deg, #fbf6df 0%, #d9ecd0 30%, #6fae8c 47%, #10201a 50%, #2a5a45 52%, #8fd3aa 70%, #f2efd8 100%);
+  color: transparent; -webkit-text-stroke: 1px rgba(230, 255, 240, 0.85);
+  background: linear-gradient(180deg, #f4fff8 0%, #c4f7dc 30%, #3fae7c 47%, #06150d 50%, #0f5a3a 52%, #4fe8a0 70%, #ecfff4 100%);
   -webkit-background-clip: text; background-clip: text;
-  text-shadow: -2px 0 rgba(255, 90, 90, 0.3), 2px 0 rgba(80, 200, 255, 0.26), 0 0 24px rgba(143, 220, 174, 0.35);
+  text-shadow: -2px 0 rgba(255, 80, 120, 0.26), 2px 0 rgba(70, 190, 255, 0.24), 0 0 26px rgba(79, 232, 160, 0.45);
   opacity: 0; transform: translateX(var(--x, 0)) scale(1.4); filter: blur(14px);
   animation: soon-letter 1.4s var(--ease-out) forwards;
 }
@@ -94,13 +96,13 @@
   display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px;
   font-size: clamp(11px, min(1.1vw, 1.7vh), 24px); letter-spacing: 0.42em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72);
 }
-.soon-sub__dot { color: #8fdcae; }
+.soon-sub__dot { color: #4fe8a0; }
 .soon-contacts {
   animation-delay: 5.8s;
   display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px;
   font-size: clamp(12px, min(0.9vw, 1.45vh), 20px); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5);
 }
-.soon-contacts a { color: #d9ecd0; text-decoration: none; border-bottom: 1px solid rgba(184, 255, 217, 0.35); transition: border-color 0.2s, color 0.2s; }
+.soon-contacts a { color: #c8ffe0; text-decoration: none; border-bottom: 1px solid rgba(184, 255, 217, 0.35); transition: border-color 0.2s, color 0.2s; }
 .soon-contacts a:hover { color: #fff; border-color: #fff; }
 @keyframes soon-up { to { opacity: 1; transform: none; } }
 
@@ -131,8 +133,8 @@
 .soon-vhs {
   position: absolute; inset: 0; z-index: 4; pointer-events: none; mix-blend-mode: screen;
   background:
-    linear-gradient(180deg, rgba(255, 214, 160, 0.07), rgba(170, 120, 190, 0.06) 70%, rgba(255, 190, 150, 0.08)),
-    radial-gradient(120% 90% at 50% 40%, rgba(255, 230, 190, 0.05), transparent 70%);
+    linear-gradient(180deg, rgba(255, 214, 160, 0.035), rgba(170, 120, 190, 0.03) 70%, rgba(255, 190, 150, 0.04)),
+    radial-gradient(120% 90% at 50% 40%, rgba(255, 230, 190, 0.025), transparent 70%);
 }
 
 /* ---------- Intestazione: Panorama Records a sinistra, BPM a destra ---------- */
@@ -140,12 +142,12 @@
   position: absolute; z-index: 6; top: 0; left: 0; right: 0; height: max(5.5vh, 40px);
   display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(16px, 3vw, 56px);
   font-size: clamp(10px, min(0.85vw, 1.35vh), 17px); font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase;
-  color: rgba(236, 236, 214, 0.6); opacity: 0; animation: soon-fade 1.2s ease 1s forwards;
+  color: rgba(225, 255, 238, 0.62); opacity: 0; animation: soon-fade 1.2s ease 1s forwards;
 }
 .soon-hud__bpm { display: inline-flex; align-items: center; }
 .soon-hud__bpm i {
   width: 0.6em; height: 0.6em; margin-right: 0.8em; border-radius: 50%;
-  background: #8fdcae; box-shadow: 0 0 8px rgba(143, 220, 174, 0.8); animation: soon-tick var(--beat) steps(1) infinite;
+  background: #4fe8a0; box-shadow: 0 0 8px rgba(79, 232, 160, 0.9); animation: soon-tick var(--beat) steps(1) infinite;
 }
 @keyframes soon-tick { 0% { opacity: 1; } 30% { opacity: 0.15; } }
 
@@ -153,13 +155,13 @@
 /* il sole si abbassa sull'orizzonte così i titoli restano nel cielo libero */
 @media (min-aspect-ratio: 1/1) {
   .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.62); }
-  .soon-water > ellipse, .soon-water > rect, .soon-water > .soon-reflection { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.66); }
+  .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.7); }
 }
 
 /* ---------- Schermi verticali (telefoni, iPad verticale) ---------- */
 @media (max-aspect-ratio: 1/1) {
   .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.58); }
-  .soon-water > ellipse, .soon-water > rect, .soon-water > .soon-reflection { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.6); }
+  .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.6); }
   .soon-content { top: 13vh; }
   .soon-logo { font-size: clamp(56px, 16vw, 200px); }
   .soon-word { font-size: clamp(48px, 13vw, 170px); }
