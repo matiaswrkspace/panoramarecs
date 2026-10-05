@@ -41,11 +41,32 @@ export default function SoonScene() {
               <stop offset=".45" stopColor="#08190f" />
               <stop offset="1" stopColor="#050a07" />
             </radialGradient>
-            <linearGradient id="soon-sun" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#eafff0" />
-              <stop offset=".55" stopColor="#4fe8a0" />
-              <stop offset="1" stopColor="#14794c" />
-            </linearGradient>
+            <radialGradient id="soon-sun" cx="50%" cy="42%" r="58%">
+              <stop offset="0" stopColor="#fbfff4" />
+              <stop offset=".35" stopColor="#d6fbe4" />
+              <stop offset=".72" stopColor="#7ee9b4" />
+              <stop offset="1" stopColor="#2fae74" />
+            </radialGradient>
+            {/* bagliore stretto attorno al disco */}
+            <radialGradient id="soon-corona">
+              <stop offset=".5" stopColor="#d6fbe4" stopOpacity=".55" />
+              <stop offset=".62" stopColor="#7ee9b4" stopOpacity=".22" />
+              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
+            </radialGradient>
+            {/* superficie: macchie leggere, come visto attraverso l'atmosfera */}
+            <filter id="soon-surface" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="4" seed="11" />
+              <feColorMatrix values="0 0 0 0 0.05  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 -1.4 1.05" />
+            </filter>
+            {/* foschia dove il sole tocca l'acqua */}
+            <radialGradient id="soon-haze">
+              <stop offset="0" stopColor="#e6fff1" stopOpacity=".42" />
+              <stop offset=".4" stopColor="#9ef0c6" stopOpacity=".16" />
+              <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
+            </radialGradient>
+            <filter id="soon-blur-stripes" x="-5%" y="-50%" width="110%" height="200%">
+              <feGaussianBlur stdDeviation="0 1.2" />
+            </filter>
             <radialGradient id="soon-halo">
               <stop offset="0" stopColor="#4fe8a0" stopOpacity=".34" />
               <stop offset="1" stopColor="#4fe8a0" stopOpacity="0" />
@@ -77,19 +98,25 @@ export default function SoonScene() {
             <g className="soon-sun">
               <circle cx="800" cy="600" r="460" fill="url(#soon-halo)" className="soon-sun__halo" />
               <g clipPath="url(#soon-above)">
+                <circle cx="800" cy="600" r="480" fill="url(#soon-corona)" />
                 <g clipPath="url(#soon-disc)">
-                  <circle cx="800" cy="600" r="240" fill="url(#soon-sun)" opacity=".5" />
-                  {/* tagli orizzontali da tramonto retrò, sempre più spessi verso l'orizzonte */}
-                  {stripes.map((y, i) => (
-                    <rect key={y} x="540" y={y - 4 - i} width="520" height={4 + i * 1.8} fill="#06130c" />
-                  ))}
+                  <circle cx="800" cy="600" r="240" fill="url(#soon-sun)" opacity=".82" />
+                  <rect x="560" y="360" width="480" height="480" filter="url(#soon-surface)" opacity=".35" />
+                  {/* tagli orizzontali da tramonto retrò, sfumati e sempre più spessi verso l'orizzonte */}
+                  <g filter="url(#soon-blur-stripes)">
+                    {stripes.map((y, i) => (
+                      <rect key={y} x="540" y={y - 4 - i} width="520" height={3.5 + i * 1.7} fill="#06130c" opacity=".88" />
+                    ))}
+                  </g>
                 </g>
-                <circle cx="800" cy="600" r="240" fill="none" stroke="#c8ffe0" strokeOpacity=".5" strokeWidth="1.5" />
               </g>
             </g>
           </g>
 
           <line x1="0" y1={HORIZON} x2="1600" y2={HORIZON} className="soon-horizon" />
+          <g className="soon-sun-wrap">
+            <ellipse cx="800" cy={HORIZON} rx="520" ry="46" fill="url(#soon-haze)" />
+          </g>
 
           <g className="soon-water">
             {ripples.map((y, i) => (
