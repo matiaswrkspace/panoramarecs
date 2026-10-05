@@ -1,41 +1,35 @@
 import { brand } from "@/content";
-import { crown, trunk } from "../PalmArt";
 import Logo from "../Logo";
 import Particles from "./Particles";
 import "./soon.css";
 
-// Pagina "coming soon": una sequenza animata da titoli di testa, tutta in CSS/SVG
-// (nitida a ogni risoluzione, nessun file video da scaricare).
+// Pagina "coming soon": titoli di testa da film anni '80, tutto in CSS/SVG
+// (nitido a ogni risoluzione, nessun file video da scaricare).
 //
-// Timeline (secondi): 0.2 si aprono le bande nere · 0.6 orizzonte · 1.2 sole e
-// riflesso · 2.0 palme · 3.2 insegna neon · 4.2 laser · 4.8 SOON · 5.8 contatti.
-// Poi resta viva: palme che ondeggiano, sole che pulsa, polvere luminosa, laser.
+// Timeline (secondi): 0.2 si aprono le bande nere · 0.6 orizzonte · 1.2 sole ·
+// 1.8 acqua e riflesso · 3.2 insegna neon · 4.2 laser · 4.8 SOON cromato · 5.8 contatti.
+// Poi resta viva a 124 BPM: il riflesso tremola sull'acqua, il sole pulsa sul battere,
+// il puntino BPM lampeggia. Sopra: righe CRT, sfarfallio e tremolio di pellicola.
+const BPM = 124;
 
-function Palm({ side }: { side: "left" | "right" }) {
-  const c = crown([60, 62], 1);
-  return (
-    <svg viewBox="-40 -40 260 260" className={`soon-palm soon-palm--${side}`} aria-hidden="true">
-      <g className="soon-palm__sway">
-        <path d={trunk([118, 220], [104, 130], [60, 62])} className="soon-line soon-line--thin" />
-        <path d="M118 220Q104 130 60 62" className="soon-line" />
-        <g transform="translate(60 62) scale(1.45) translate(-60 -62)">
-          <path d={c.blade} className="soon-line soon-leaf" />
-          <path d={c.rib} className="soon-line soon-line--thin" />
-          <circle cx="56" cy="70" r="3" className="soon-line" />
-          <circle cx="64" cy="71" r="3" className="soon-line" />
-        </g>
-      </g>
-    </svg>
-  );
-}
+// Riflesso del sole: bande luminose sempre più strette e deboli verso il basso,
+// spezzate da un'ondulazione animata. Posizioni fisse (niente casuale al render).
+const reflection = Array.from({ length: 40 }, (_, i) => {
+  const y = 646 + i * 6;
+  const k = 1 - (y - 646) / 280;
+  const jitter = Math.sin(i * 12.9898) * 0.5 + 0.5; // pseudo-casuale ma stabile
+  const w = Math.max(18, 300 * k * (0.55 + jitter * 0.6));
+  return { y, w, x: 800 - w / 2 + (Math.cos(i * 7.31) * 15), h: 2 + jitter * 2.5, o: +(0.55 * k + 0.05).toFixed(2) };
+});
+const ripples = [640, 656, 676, 700, 728, 760, 796, 836];
 
 export default function SoonScene() {
   const stripes = [520, 548, 572, 593, 611, 626];
-  const ripples = [640, 656, 676, 700, 728, 760, 796, 836];
 
   return (
-    <main className="soon">
-      {/* Cielo, sole al tramonto, orizzonte e riflesso sull'acqua */}
+    <main className="soon" style={{ ["--beat" as string]: `${60 / BPM}s` }}>
+      <div className="soon-stage">
+      {/* Cielo, sole al tramonto e orizzonte */}
       <svg className="soon-sky" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <radialGradient id="soon-sky" cx="50%" cy="62%" r="75%">
@@ -58,10 +52,6 @@ export default function SoonScene() {
           <clipPath id="soon-disc">
             <circle cx="800" cy="600" r="240" />
           </clipPath>
-          <linearGradient id="soon-water" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#39ff8f" stopOpacity=".55" />
-            <stop offset="1" stopColor="#39ff8f" stopOpacity="0" />
-          </linearGradient>
         </defs>
 
         <rect width="1600" height="900" fill="url(#soon-sky)" />
@@ -85,6 +75,20 @@ export default function SoonScene() {
 
         <line x1="0" y1="640" x2="1600" y2="640" className="soon-horizon" />
 
+        {/* Acqua: onde leggere e riflesso del sole che tremola */}
+        <defs>
+          <filter id="soon-ripple" x="-30%" y="-10%" width="160%" height="130%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="2" seed="7">
+              <animate attributeName="baseFrequency" dur="8s" values="0.006 0.09;0.009 0.12;0.006 0.09" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="34" xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation="1.1" />
+          </filter>
+          <linearGradient id="soon-water" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#39ff8f" stopOpacity=".55" />
+            <stop offset="1" stopColor="#39ff8f" stopOpacity="0" />
+          </linearGradient>
+        </defs>
         <g className="soon-water">
           {ripples.map((y, i) => (
             <line
@@ -98,7 +102,13 @@ export default function SoonScene() {
               style={{ animationDelay: `${i * -0.35}s` }}
             />
           ))}
+          <g filter="url(#soon-ripple)" className="soon-reflection">
+            {reflection.map((b) => (
+              <rect key={b.y} x={b.x} y={b.y} width={b.w} height={b.h} fill="#9dffcf" opacity={b.o} />
+            ))}
+          </g>
         </g>
+
       </svg>
 
       {/* Laser dal soffitto */}
@@ -107,9 +117,6 @@ export default function SoonScene() {
       </div>
 
       <Particles />
-
-      <Palm side="left" />
-      <Palm side="right" />
 
       <div className="soon-content">
         <Logo as="h1" className="soon-logo" />
@@ -120,7 +127,7 @@ export default function SoonScene() {
         </p>
       </div>
 
-      {/* Riga d'informazioni in basso, sull'acqua, come su un poster */}
+      {/* Riga d'informazioni in basso, come su un poster */}
       <div className="soon-info">
         <p className="soon-sub">
           <span>Il nuovo sito sta arrivando</span>
@@ -133,9 +140,17 @@ export default function SoonScene() {
         </p>
       </div>
 
-      {/* Bande cinematografiche, grana e vignettatura */}
-      <div className="soon-bars" aria-hidden="true"><i /><i /></div>
+      </div>
+
+      {/* Pellicola: righe CRT, sfarfallio, grana; poi bande cinema e intestazione */}
+      <div className="soon-scanlines" aria-hidden="true" />
+      <div className="soon-flicker" aria-hidden="true" />
       <div className="soon-grain" aria-hidden="true" />
+      <div className="soon-bars" aria-hidden="true"><i /><i /></div>
+      <header className="soon-hud">
+        <span>Panorama Records</span>
+        <span className="soon-hud__bpm"><i aria-hidden="true" />{BPM} BPM</span>
+      </header>
     </main>
   );
 }

@@ -14,8 +14,8 @@
 
 .soon-sun { transform: translateY(260px); opacity: 0; animation: soon-rise 2.4s var(--ease-out) 1.2s forwards; }
 @keyframes soon-rise { to { transform: none; opacity: 1; } }
-.soon-sun__halo { transform-box: fill-box; transform-origin: center; animation: soon-breathe 5s ease-in-out 3.6s infinite; }
-@keyframes soon-breathe { 50% { opacity: 0.6; transform: scale(1.06); } }
+.soon-sun__halo { transform-box: fill-box; transform-origin: center; animation: soon-beat var(--beat) ease-out 3.6s infinite; }
+@keyframes soon-beat { 0% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.72; transform: scale(1); } }
 
 .soon-horizon {
   stroke: #b8ffd9; stroke-width: 1.5; opacity: 0.8;
@@ -25,27 +25,22 @@
 }
 @keyframes soon-draw { to { stroke-dashoffset: 0; } }
 
+@keyframes soon-fade { to { opacity: 1; } }
+
+/* ---------- Palcoscenico: leggero tremolio di pellicola (gate weave) ---------- */
+.soon-stage { position: absolute; inset: 0; animation: soon-weave 1.1s steps(1) infinite; }
+@keyframes soon-weave {
+  0% { transform: translate(0, 0); } 20% { transform: translate(0.6px, -0.4px); } 40% { transform: translate(-0.5px, 0.5px); }
+  60% { transform: translate(0.3px, 0.7px); } 80% { transform: translate(-0.6px, -0.3px); }
+}
+
+/* ---------- Acqua: onde e riflesso del sole ---------- */
 .soon-water { opacity: 0; animation: soon-fade 1.6s ease 1.8s forwards; }
 .soon-water line { transform-box: fill-box; transform-origin: center; animation: soon-ripple 3.2s ease-in-out infinite; }
 @keyframes soon-ripple { 50% { transform: scaleX(0.82) translateX(6px); opacity: 0.55; } }
-@keyframes soon-fade { to { opacity: 1; } }
-
-/* ---------- Palme ---------- */
-.soon-palm {
-  position: absolute; bottom: -2vh; height: 88vh; width: auto; overflow: visible;
-  filter: drop-shadow(0 0 3px rgba(57, 255, 143, 0.9)) drop-shadow(0 0 18px rgba(57, 255, 143, 0.35));
-  opacity: 0; animation: soon-palm-in 1.8s var(--ease-out) 2s forwards;
-}
-.soon-palm--left { left: max(-14vh, -12vw); --from: -18vw; }
-.soon-palm--right { right: max(-14vh, -12vw); --from: 18vw; transform: scaleX(-1); }
-@keyframes soon-palm-in { from { translate: var(--from) 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
-.soon-palm__sway { transform-box: view-box; transform-origin: 118px 220px; animation: soon-sway 6s ease-in-out 3.8s infinite; }
-.soon-palm--right .soon-palm__sway { animation-duration: 7s; animation-delay: 4.3s; }
-@keyframes soon-sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-2.2deg); } }
-
-.soon-line { fill: none; stroke: #b8ffd9; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.soon-line--thin { stroke-width: 1.3; }
-.soon-leaf { fill: rgba(57, 255, 143, 0.1); stroke-width: 1.6; }
+/* il riflesso respira sul battere, come il sole */
+.soon-reflection { animation: soon-shimmer var(--beat) ease-out 3.6s infinite; }
+@keyframes soon-shimmer { 0% { opacity: 1; } 100% { opacity: 0.78; } }
 
 /* ---------- Laser ---------- */
 .soon-lasers { position: absolute; inset: 0; pointer-events: none; opacity: 0; animation: soon-fade 1.2s ease 4.2s forwards; }
@@ -75,35 +70,40 @@
 .soon-logo {
   font-size: clamp(56px, min(13vw, 19vh), 420px); line-height: 1.15; padding: 0 0.12em;
   opacity: 0; animation: soon-ignite 1.3s steps(1, end) 3.2s forwards, neon 7s 5s infinite;
+  text-shadow: -2px 0 rgba(255, 60, 140, 0.35), 2px 0 rgba(60, 170, 255, 0.35),
+    0 0 4px #fff, 0 0 12px var(--neon), 0 0 30px rgba(57, 255, 143, 0.6), 0 0 70px rgba(57, 255, 143, 0.35);
 }
 @keyframes soon-ignite {
   0% { opacity: 0; } 8% { opacity: 0.8; } 12% { opacity: 0.1; } 22% { opacity: 0.9; } 26% { opacity: 0.2; }
   40% { opacity: 1; } 46% { opacity: 0.35; } 60%, 100% { opacity: 1; }
 }
 
-/* SOON: lettere vuote al neon che arrivano larghe e sfocate e si stringono */
+/* SOON: lettere cromate anni '80 che arrivano larghe e sfocate e si stringono */
 .soon-word {
   display: flex; justify-content: center; gap: 0.16em; margin-top: clamp(4px, 1vh, 14px);
+  font-style: italic; transform: skewX(-6deg);
   font-weight: 700; font-size: clamp(48px, min(12vw, 15vh), 360px); line-height: 1; letter-spacing: 0;
 }
 .soon-word span {
-  color: transparent; -webkit-text-stroke: 1.5px #b8ffd9;
-  text-shadow: 0 0 22px rgba(57, 255, 143, 0.45);
-  background: linear-gradient(100deg, transparent 40%, rgba(217, 255, 236, 0.95) 50%, transparent 60%) no-repeat;
-  background-size: 300% 100%; background-position: 150% 0;
+  color: transparent; -webkit-text-stroke: 1px rgba(234, 255, 244, 0.85);
+  background: linear-gradient(180deg, #f4fff9 0%, #c9ffe4 30%, #4fbf8a 47%, #06150d 50%, #0f5a3a 52%, #39ff8f 70%, #e6fff2 100%);
   -webkit-background-clip: text; background-clip: text;
+  text-shadow: 0 0 26px rgba(57, 255, 143, 0.45);
   opacity: 0; transform: translateX(var(--x, 0)) scale(1.4); filter: blur(14px);
-  animation: soon-letter 1.4s var(--ease-out) forwards, soon-shine 5s ease-in-out 7s infinite;
+  animation: soon-letter 1.4s var(--ease-out) forwards;
 }
 .soon-word span:nth-child(1) { --x: -0.6em; }
 .soon-word span:nth-child(2) { --x: -0.2em; }
 .soon-word span:nth-child(3) { --x: 0.2em; }
 .soon-word span:nth-child(4) { --x: 0.6em; }
 @keyframes soon-letter { to { opacity: 1; transform: none; filter: blur(0); } }
-/* riflesso di luce che attraversa le lettere ogni tanto */
-@keyframes soon-shine { 0% { background-position: 150% 0; } 40%, 100% { background-position: -50% 0; } }
 
 .soon-sub, .soon-contacts { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.9); opacity: 0; transform: translateY(14px); animation: soon-up 1.2s var(--ease-out) forwards; }
+.soon-info::before {
+  content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: min(1100px, 110vw); height: 260%;
+  translate: -50% -50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(1, 4, 2, 0.88), rgba(1, 4, 2, 0.55) 55%, transparent);
+}
 .soon-info {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: calc(5.5vh + clamp(20px, 5vh, 56px));
   display: flex; flex-direction: column; align-items: center; padding: 0 16px; text-align: center;
@@ -146,6 +146,28 @@
   background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.75));
 }
 
+/* ---------- Pellicola anni '80: righe CRT e sfarfallio ---------- */
+.soon-scanlines {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0.55;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0, 0, 0, 0.28) 3px, transparent 4px);
+}
+.soon-flicker { position: absolute; inset: 0; z-index: 4; pointer-events: none; background: #b8ffd9; opacity: 0; animation: soon-flicker 0.25s steps(1) infinite; }
+@keyframes soon-flicker { 0% { opacity: 0.015; } 33% { opacity: 0.035; } 66% { opacity: 0; } }
+
+/* ---------- Intestazione: Panorama Records a sinistra, BPM a destra ---------- */
+.soon-hud {
+  position: absolute; z-index: 6; top: 0; left: 0; right: 0; height: max(5.5vh, 40px);
+  display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(16px, 3vw, 56px);
+  font-size: clamp(10px, min(0.85vw, 1.35vh), 17px); font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(234, 255, 244, 0.62); opacity: 0; animation: soon-fade 1.2s ease 1s forwards;
+}
+.soon-hud__bpm { display: inline-flex; align-items: center; }
+.soon-hud__bpm i {
+  width: 0.6em; height: 0.6em; margin-right: 0.8em; border-radius: 50%;
+  background: #39ff8f; box-shadow: 0 0 8px #39ff8f; animation: soon-tick var(--beat) steps(1) infinite;
+}
+@keyframes soon-tick { 0% { opacity: 1; } 30% { opacity: 0.15; } }
+
 /* ---------- Schermi orizzontali (computer, iPad orizzontale, telefono ruotato) ---------- */
 /* il sole si abbassa sull'orizzonte così i titoli restano nel cielo libero */
 @media (min-aspect-ratio: 1/1) {
@@ -157,10 +179,6 @@
 @media (max-aspect-ratio: 1/1) {
   .soon-sun-wrap { transform-box: view-box; transform-origin: 800px 640px; transform: scale(0.58); }
   .soon-water { transform-box: view-box; transform-origin: 800px 640px; transform: scaleX(0.6); }
-  /* palme più piccole appoggiate ai bordi: incorniciano la scena */
-  .soon-palm { height: 40vh; bottom: -1vh; }
-  .soon-palm--left { left: calc(-0.34 * 40vh); }
-  .soon-palm--right { right: calc(-0.34 * 40vh); }
   .soon-content { top: 13vh; }
   .soon-logo { font-size: clamp(56px, 16vw, 200px); }
   .soon-word { font-size: clamp(48px, 13vw, 170px); }
