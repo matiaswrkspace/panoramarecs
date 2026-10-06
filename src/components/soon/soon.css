@@ -105,7 +105,8 @@
   -webkit-background-clip: text; background-clip: text;
   text-shadow: -2px 0 rgba(255, 80, 120, 0.26), 2px 0 rgba(70, 190, 255, 0.24), 0 0 26px rgba(79, 232, 160, 0.45);
 }
-@keyframes soon-word-in { from { opacity: 0; gap: 0.7em; filter: blur(10px); } to { opacity: 1; gap: 0.16em; filter: blur(0); } }
+/* niente sfocatura qui: su Safari rompe il ritaglio della sfumatura sulle lettere */
+@keyframes soon-word-in { from { opacity: 0; gap: 0.7em; scale: 1.08; } to { opacity: 1; gap: 0.16em; scale: 1; } }
 
 .soon-sub, .soon-contacts { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.9); opacity: 0; transform: translateY(14px); animation: soon-up 1.2s var(--ease-out) forwards; }
 .soon-info::before {
