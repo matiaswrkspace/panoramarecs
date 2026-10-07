@@ -1,7 +1,6 @@
 import "./soon.css";
 
-// Pagina "coming soon": solo la scritta, che si accende come un lampione nella notte
-// e ogni tanto sfarfalla.
+// Pagina "coming soon": solo la scritta, al centro, che compare in dissolvenza.
 export default function SoonScene() {
   return (
     <main className="soon">
