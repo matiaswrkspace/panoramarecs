@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { brand } from "@/content";
 import Logo from "../Logo";
 import MoonReflection from "./MoonReflection";
 import Particles from "./Particles";
@@ -188,10 +187,7 @@ export default function SoonScene() {
 
         {/* Riga d'informazioni in basso, come su un poster */}
         <div className="soon-info">
-          <p className="soon-contacts">
-            <span>Brescia, Italia</span>
-            <a href={`mailto:${brand.email}`}>{brand.email}</a>
-          </p>
+          <p className="soon-contacts">Coming soon</p>
         </div>
       </div>
 
